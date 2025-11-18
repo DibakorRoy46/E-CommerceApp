@@ -15,13 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Commands\" />
-    <Folder Include="Handlers\" />
-    <Folder Include="Data\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Queries\" />
+    <ProjectReference Include="..\Catalog.Application\Catalog.Application.csproj" />
+    <ProjectReference Include="..\Catalog.Infrastructure\Catalog.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
