@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Catalog.Application.Validators;
 
-internal class CreateProductHierarchyCommandValidator : AbstractValidator<CreateProductHierarchyCommand>
+public class CreateProductHierarchyCommandValidator : AbstractValidator<CreateProductHierarchyCommand>
 {
     public CreateProductHierarchyCommandValidator()
     {
