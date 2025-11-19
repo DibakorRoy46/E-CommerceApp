@@ -3,6 +3,7 @@ namespace Catalog.Domain.Enums;
 
 public enum StatusEnum
 {
+    NoFilter=0,
     Initiate=1,
     Authenticated=2,
     Authroized=3,

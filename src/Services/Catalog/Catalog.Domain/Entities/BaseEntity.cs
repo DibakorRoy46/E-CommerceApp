@@ -7,6 +7,7 @@ public class BaseEntity
 {
     public int Id { get; protected set; }
     public string Name { get; protected set; }
+
     public string Code { get; protected set; }
     public StatusEnum Status { get; protected set; }
     public DateTimeOffset CreatedDate { get; protected set; }

@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Catalog.Application.DTOs;
+using MediatR;
 
 namespace Catalog.Application.Queries;
 
-internal class GetProductHierarchyByCodeQuery
+public class GetProductHierarchyByCodeQuery : IRequest<ProductHierarchyDto>
 {
+    public string Code { get; }
+    public GetProductHierarchyByCodeQuery(string code)
+    {
+        Code = code;
+    }
 }

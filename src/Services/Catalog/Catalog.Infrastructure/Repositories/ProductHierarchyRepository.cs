@@ -2,6 +2,7 @@
 
 using Catalog.Application.Interfaces;
 using Catalog.Domain.Entities;
+using Catalog.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Infrastructure.Repositories;
@@ -25,9 +26,20 @@ public class ProductHierarchyRepository : IProductHierarchyRepository
     {
         return await _db.ProductHierarchies.FirstOrDefaultAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
     }
-    public async Task<List<ProductHierarchy>> GetAllAsync(CancellationToken ct = default)
+    public async Task<List<ProductHierarchy>> GetAllAsync(ProductHierarchyLevelEnum? levelId,int? parentId,StatusEnum status,CancellationToken cancellationToken)
     {
-        return await _db.ProductHierarchies.AsNoTracking().ToListAsync(ct);
+        var query = _db.ProductHierarchies.AsQueryable();
+
+        if (levelId.HasValue)
+            query = query.Where(x => x.LevelId == levelId);
+
+        if (parentId.HasValue)
+            query = query.Where(x => x.ParentId == parentId);
+
+        if (StatusEnum.NoFilter != status)
+            query = query.Where(x => x.Status == status);
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<bool> Remove(ProductHierarchy entity)

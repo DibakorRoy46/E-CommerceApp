@@ -1,11 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+
+using Catalog.Application.DTOs;
+using Catalog.Domain.Enums;
+using MediatR;
 
 namespace Catalog.Application.Queries;
 
-internal class GetProductHierarchiesQuery
+public class GetProductHierarchiesQuery : IRequest<List<ProductHierarchyDto>>
 {
+    public ProductHierarchyLevelEnum? LevelId { get; }
+    public int? ParentId { get; }
+    public StatusEnum Status { get; }
+    public GetProductHierarchiesQuery(ProductHierarchyLevelEnum? levelId, int? parentId, StatusEnum status)
+    {
+        LevelId = levelId;
+        ParentId = parentId;
+        Status = status;
+    }
 }

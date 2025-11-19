@@ -1,26 +1,31 @@
 using Catalog.Application.Commands;
 using Catalog.Application.Interfaces;
-using Catalog.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Catalog.Application.Validators;
+using Catalog.Infrastructure.Repositories;
 using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configuration
 var configuration = builder.Configuration;
 
 // Add Application services
-builder.Services.AddMediatR(cfg =>
-                 cfg.RegisterServicesFromAssembly(typeof(CreateProductHierarchyCommand).Assembly));
-
-builder.Services.AddValidatorsFromAssembly(typeof(CreateProductHierarchyCommandValidator).Assembly);
-
 builder.Services.AddDbContext<AppDbContext>(options =>
                  options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddMediatR(cfg =>
+                 cfg.RegisterServicesFromAssembly(typeof(CreateProductHierarchyCommand).Assembly));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddValidatorsFromAssembly(typeof(CreateProductHierarchyCommandValidator).Assembly);
+
+
 // Repositories
-builder.Services.AddScoped<IProductHierarchyRepository,
-ProductHierarchyRepository>();
+builder.Services.AddScoped<IProductHierarchyRepository,ProductHierarchyRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

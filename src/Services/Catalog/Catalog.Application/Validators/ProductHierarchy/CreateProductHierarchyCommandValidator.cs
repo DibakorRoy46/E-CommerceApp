@@ -19,7 +19,7 @@ public class CreateProductHierarchyCommandValidator : AbstractValidator<CreatePr
                     .Must(value => Enum.IsDefined(typeof(ProductHierarchyLevelEnum), value))
                     .WithMessage("LevelId is invalid.");
         RuleFor(x => x.CreatedBy)
-                    .NotEmpty().WithMessage("Name is required");
+                    .NotEmpty().WithMessage("Created User is required");
 
     }
 }

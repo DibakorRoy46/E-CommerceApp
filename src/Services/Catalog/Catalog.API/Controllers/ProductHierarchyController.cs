@@ -1,4 +1,6 @@
 ﻿using Catalog.Application.Commands;
+using Catalog.Application.Queries;
+using Catalog.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,20 +14,37 @@ public class ProductHierarchyController : ControllerBase
     private readonly IMediator _mediator;
     public ProductHierarchyController(IMediator mediator) => _mediator =  mediator;
 
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateProductHierarchyCommand command)
+    [HttpGet]
+    public async Task<IActionResult> GetAll(ProductHierarchyLevelEnum? levelId, int? parentId,StatusEnum status)
     {
-        var id = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { id }, null);
+        var query = new GetProductHierarchiesQuery(levelId,parentId,status);
+        var dtos = await _mediator.Send(query);
+        return Ok(dtos);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        //var query = new GetProductHierarchyByIdQuery(id);
-        //var dto = await _mediator.Send(query);
-        //if (dto is null) return NotFound();
-        return Ok();
+        var query = new GetProductHierarchyByIdQuery(id);
+        var dto = await _mediator.Send(query);
+        if (dto is null) return NotFound();
+        return Ok(dto);
+    }
+
+    [HttpGet("GetByCode/{code}")]
+    public async Task<IActionResult> GetByCode([FromRoute] string code)
+    {
+        var query = new GetProductHierarchyByCodeQuery(code);
+        var dto = await _mediator.Send(query);
+        if (dto is null) return NotFound();
+        return Ok(dto);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateProductHierarchyCommand command)
+    {
+        var id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id }, null);
     }
 
     [HttpPut("{id}")]
