@@ -21,7 +21,7 @@ public class DeleteProductHierarchyHandler : IRequestHandler<DeleteProductHierar
                                  ?? throw new KeyNotFoundException("ProductHierarchy not found");
 
         // Remove it
-        _repo.Remove(entity);
+        await _repo.Remove(entity);
         await _repo.SaveChangesAsync(ct);
 
         // Return true to indicate success

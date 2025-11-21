@@ -1,5 +1,6 @@
 using Catalog.Application.Commands;
 using Catalog.Application.Interfaces;
+using Catalog.Application.Mapping;
 using Catalog.Application.Validators;
 using Catalog.Infrastructure.Repositories;
 using FluentValidation;
@@ -23,9 +24,11 @@ builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 builder.Services.AddValidatorsFromAssembly(typeof(CreateProductHierarchyCommandValidator).Assembly);
 
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 // Repositories
 builder.Services.AddScoped<IProductHierarchyRepository,ProductHierarchyRepository>();
+builder.Services.AddScoped<IBrandRepository,BrandRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

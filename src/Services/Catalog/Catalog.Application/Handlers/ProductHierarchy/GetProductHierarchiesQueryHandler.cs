@@ -1,4 +1,5 @@
 ﻿
+using AutoMapper;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Queries;
@@ -10,19 +11,17 @@ public class GetProductHierarchiesQueryHandler
     : IRequestHandler<GetProductHierarchiesQuery, List<ProductHierarchyDto>>
 {
     private readonly IProductHierarchyRepository _repository;
+    private readonly IMapper _mapper;
 
-    public GetProductHierarchiesQueryHandler(IProductHierarchyRepository repository)
+    public GetProductHierarchiesQueryHandler(IProductHierarchyRepository repository, IMapper mapper)
     {
         _repository = repository;
+        _mapper = mapper;
     }
 
     public async Task<List<ProductHierarchyDto>> Handle(GetProductHierarchiesQuery request, CancellationToken cancellationToken)
     {
         var results = await _repository.GetAllAsync(request.LevelId, request.ParentId, request.Status,cancellationToken);
-
-        return results.Select(x => 
-                     new ProductHierarchyDto( x.Id,x.Name, x.Code, x.LevelId,x.ParentId, x.Status, x.CreatedDate,x.CreatedBy,
-                     x.ModifiedDate, x.ModifiedBy )
-            ).ToList();
+        return _mapper.Map<List<ProductHierarchyDto>>(results);
     }
 }

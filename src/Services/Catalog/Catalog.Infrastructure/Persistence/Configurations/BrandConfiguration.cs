@@ -5,37 +5,44 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Catalog.Infrastructure.Persistence.Configurations;
 
-public class ProductHierarchyConfiguration :IEntityTypeConfiguration<ProductHierarchy>
+public class BrandConfiguration : IEntityTypeConfiguration<Brand>
 {
-    public void Configure(EntityTypeBuilder<ProductHierarchy> builder)
+    public void Configure(EntityTypeBuilder<Brand> builder)
     {
-        builder.ToTable("ProductHierarchies");
-        builder.HasKey(x => x.Id);
-        builder.Property(x =>x.Id).HasColumnName("id").UseIdentityAlwaysColumn();
-        builder.Property(x => x.Name)
-               .IsRequired()
-               .HasMaxLength(200)
-               .HasColumnName("name");
-        builder.Property(x => x.Code)
-               .IsRequired()
-               .HasMaxLength(50)
-               .HasColumnName("code");
+        builder.ToTable(nameof(Brand));
+        builder.HasKey(b => b.Id);
+
+        builder.Property(b => b.Name)
+            .IsRequired()
+            .HasMaxLength(100)
+            .HasColumnName("name");
+
+        builder.Property(b => b.Code)
+            .HasColumnName("code")
+            .IsRequired()
+            .HasMaxLength(50);
+
         builder.Property(x => x.Status)
                .IsRequired()
                .HasColumnName("status");
+
         builder.Property(x => x.CreatedDate)
                .IsRequired()
                .HasColumnName("createddate");
+
         builder.Property(x => x.CreatedBy)
+               .IsRequired()
                .HasMaxLength(100)
                .HasColumnName("createdby");
+
         builder.Property(x => x.ModifiedDate)
                .HasColumnName("modifieddate");
+
         builder.Property(x => x.ModifiedBy)
                .HasMaxLength(100)
                .HasColumnName("modifiedby");
         // Indexes
         builder.HasIndex(x => x.Code).IsUnique();
+        builder.HasIndex(x => x.Name).IsUnique();
     }
 }
-

@@ -1,5 +1,6 @@
 ﻿
 
+using AutoMapper;
 using Catalog.Application.DTOs;
 using Catalog.Application.Interfaces;
 using Catalog.Application.Queries;
@@ -11,8 +12,13 @@ public class GetProductHierarchyByCodeQueryHandler :
      IRequestHandler<GetProductHierarchyByCodeQuery,ProductHierarchyDto>
 {
     private readonly IProductHierarchyRepository _repo;
+    private readonly IMapper _mapper;
 
-    public GetProductHierarchyByCodeQueryHandler(IProductHierarchyRepository repo)=>_repo = repo;
+    public GetProductHierarchyByCodeQueryHandler(IProductHierarchyRepository repo,IMapper mapper)
+    {
+        _repo = repo;
+        _mapper = mapper;
+    }
 
     public async Task<ProductHierarchyDto> Handle(GetProductHierarchyByCodeQuery request, CancellationToken cancellationToken)
     {
@@ -22,8 +28,7 @@ public class GetProductHierarchyByCodeQueryHandler :
         {
             throw new KeyNotFoundException($"ProductHierarchy with Code {request.Code} not found.");
         }
-        return new ProductHierarchyDto(result.Id, result.Name, result.Code, result.LevelId,
-            result.ParentId, result.Status, result.CreatedDate, result.CreatedBy,
-            result.ModifiedDate, result.ModifiedBy);
+
+        return _mapper.Map<ProductHierarchyDto>(result);
     }
 }

@@ -9,17 +9,17 @@ namespace Catalog.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BrandController : ControllerBase
+public class ProductHierarchyController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public BrandController(IMediator mediator) => _mediator =  mediator;
+    public ProductHierarchyController(IMediator mediator) => _mediator =  mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(StatusEnum status)
+    public async Task<IActionResult> GetAll(ProductHierarchyLevelEnum? levelId, int? parentId,StatusEnum status)
     {
         try
         {
-            var query = new GetBrandsQuery(status);
+            var query = new GetProductHierarchiesQuery(levelId, parentId, status);
             var dtos = await _mediator.Send(query);
             return Ok(dtos);
         }
@@ -35,7 +35,7 @@ public class BrandController : ControllerBase
     {
         try
         {
-            var query = new GetBrandByIdQuery(id);
+            var query = new GetProductHierarchyByIdQuery(id);
             var dto = await _mediator.Send(query);
             if (dto is null) return NotFound();
             return Ok(dto);
@@ -51,7 +51,7 @@ public class BrandController : ControllerBase
     {
         try
         {
-            var query = new GetBrandByCodeQuery(code);
+            var query = new GetProductHierarchyByCodeQuery(code);
             var dto = await _mediator.Send(query);
             if (dto is null) return NotFound();
             return Ok(dto);
@@ -63,7 +63,7 @@ public class BrandController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateBrandCommand command)
+    public async Task<IActionResult> Create(CreateProductHierarchyCommand command)
     {
         try
         {
@@ -77,7 +77,7 @@ public class BrandController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateBrandCommand command)
+    public async Task<IActionResult> Update(int id, UpdateProductHierarchyCommand command)
     {
         try
         {
@@ -92,7 +92,7 @@ public class BrandController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProductHierarchy(int id, DeleteBrandCommand command)
+    public async Task<IActionResult> DeleteProductHierarchy(int id, DeleteProductHierarchyCommand command)
     {
         try
         {

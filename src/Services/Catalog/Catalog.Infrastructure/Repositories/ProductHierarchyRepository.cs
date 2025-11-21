@@ -12,9 +12,9 @@ public class ProductHierarchyRepository : IProductHierarchyRepository
     private readonly AppDbContext _db;
     public ProductHierarchyRepository(AppDbContext db) => _db = db;
 
-    public async Task<bool> AddAsync(ProductHierarchy entity, CancellationToken ct= default)
+    public async Task<bool> AddAsync(ProductHierarchy entity)
     {
-        var result=await _db.ProductHierarchies.AddAsync(entity, ct);
+        var result=await _db.ProductHierarchies.AddAsync(entity);
         return result.State == EntityState.Added;
     }
 
