@@ -7,6 +7,8 @@ public record BrandDto(
     int Id,
     string Name,
     string Code, 
+    int ProductHierarchyId,
+    string ProductHierarchyName,
     StatusEnum Status,
     string? CreatedBy,
     DateTimeOffset? CreatedDate,                      

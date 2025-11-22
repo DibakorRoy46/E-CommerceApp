@@ -22,6 +22,10 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
             .IsRequired()
             .HasMaxLength(50);
 
+        builder.Property(b => b.ProductHierarchyId)
+            .IsRequired()
+            .HasColumnName("producthierarchyid");
+
         builder.Property(x => x.Status)
                .IsRequired()
                .HasColumnName("status");

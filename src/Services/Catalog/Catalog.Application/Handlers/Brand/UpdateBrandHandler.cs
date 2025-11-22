@@ -18,7 +18,7 @@ public class UpdateBrandHandler : IRequestHandler<UpdateBrandCommand, Unit>
         var entity=await _repo.GetByIdAsync(request.Id,cancellationToken)
             ?? throw new KeyNotFoundException("Brand is not found");
 
-        entity.Update(request.Name, request.Code, request.Status, request.ModifiedBy);
+        entity.Update(request.Name, request.Code,request.ProductHierarchyId, request.Status, request.ModifiedBy);
         await _repo.UpdateAsync(entity);
         await _repo.SaveChangesAsync(cancellationToken);
         return Unit.Value;

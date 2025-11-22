@@ -20,9 +20,9 @@ public class BrandRepository : IBrandRepository
 
     public async Task<List<Brand>> GetAllAsync(StatusEnum? status, CancellationToken cancellationToken = default)
     {
-        var brands = _db.Brands.AsQueryable();
+        var brands = _db.Brands.AsNoTracking().Include(x=>x.ProductHierarchy).AsQueryable();
 
-        if(status != null && status == StatusEnum.NoFilter)
+        if(status is not null && status != StatusEnum.NoFilter)
         {
             brands = brands.Where(x => x.Status == status);
         }
@@ -31,12 +31,12 @@ public class BrandRepository : IBrandRepository
 
     public async Task<Brand?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)
     {
-        return await _db.Brands.FirstOrDefaultAsync(x => x.Code.ToLower() == code.ToLower(), cancellationToken);
+        return await _db.Brands.AsNoTracking().Include(x=>x.ProductHierarchy).FirstOrDefaultAsync(x => x.Code.ToLower() == code.ToLower(), cancellationToken);
     }
 
     public async Task<Brand?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _db.Brands.FirstOrDefaultAsync(x=> x.Id == id, cancellationToken);   
+        return await _db.Brands.AsNoTracking().Include(x => x.ProductHierarchy).FirstOrDefaultAsync(x=> x.Id == id, cancellationToken);   
     }
 
     public async Task<bool> RemoveAsync(Brand brand)
