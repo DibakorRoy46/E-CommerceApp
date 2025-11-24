@@ -10,6 +10,8 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Serilog.Formatting.Compact;
+using Serilog.Sinks.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configuration
@@ -17,12 +19,31 @@ var configuration = builder.Configuration;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
     .Enrich.WithEnvironmentName()
     .Enrich.WithThreadId()
-    .WriteTo.Console()
+    // Console
+    .WriteTo.Console(new RenderedCompactJsonFormatter())
+    // File sinks (your existing)
     .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .WriteTo.Seq("http://localhost:5341") // optional Seq
+    .WriteTo.File("Logs/info-.txt",
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
+    .WriteTo.File("Logs/error-.txt",
+        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
+    .WriteTo.File(new RenderedCompactJsonFormatter(),
+              "Logs/log-.json",
+              rollingInterval: RollingInterval.Day)
+    // Seq (optional)
+    .WriteTo.Seq("http://localhost:5341")
+    // ElasticSearch
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+    {
+        AutoRegisterTemplate = true,
+        IndexFormat = "catalog-api-log-{0:yyyy.MM.dd}",
+        NumberOfShards = 1,
+        NumberOfReplicas = 0
+    })
     .CreateLogger();
 
 builder.Host.UseSerilog();
