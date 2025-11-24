@@ -21,14 +21,13 @@ public class GetProductsSearchQueryHandler : IRequestHandler<GetProductsSearchQu
     public async Task<PaginatedDto<ProductDto>> Handle(GetProductsSearchQuery request, CancellationToken cancellationToken)
     {
         var results = await _repo.SearchProductsAsync(request.ProductSpec, cancellationToken);
-        var mappeedList=  _mapper.Map<IEnumerable<ProductDto>>(results);
-        
-        return new PaginatedDto<ProductDto>
-        {
-            Datas = mappeedList,
-            PageIndex = request.ProductSpec.PageIndex, 
-            PageSize = request.ProductSpec.PageSize, 
-            TotalCount = mappeedList.Count()
-        };
+        var mappeedList = _mapper.Map<IEnumerable<ProductDto>>(results);
+
+        return new PaginatedDto<ProductDto>(
+               request.ProductSpec.PageIndex,
+               request.ProductSpec.PageSize,
+               mappeedList.Count(),
+               mappeedList
+           );
     }
 }

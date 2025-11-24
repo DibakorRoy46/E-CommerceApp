@@ -2,6 +2,7 @@
 using AutoMapper;
 using Catalog.Application.Commands;
 using Catalog.Application.Interfaces;
+using Catalog.Domain.Entities;
 using MediatR;
 
 namespace Catalog.Application.Handlers;
@@ -31,7 +32,7 @@ public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand,
             throw new ApplicationException($"Product name '{request.Name}' already exists.");
         }
 
-        var product = _mapper.Map<Domain.Entities.Product>(request);
+        var product = _mapper.Map<Product>(request);
         await _repo.AddAsync(product);
         await _repo.SaveChangesAsync(cancellationToken);
         return Unit.Value;

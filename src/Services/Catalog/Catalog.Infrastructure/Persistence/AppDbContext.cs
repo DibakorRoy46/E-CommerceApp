@@ -7,10 +7,12 @@ public class AppDbContext : DbContext
     { }
     public DbSet<ProductHierarchy> ProductHierarchies => Set<ProductHierarchy>();
     public DbSet<Brand> Brands => Set<Brand>();
+    public DbSet<Product> Products => Set<Product>();
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ProductHierarchyConfiguration());
-        modelBuilder.ApplyConfiguration(new ProductHierarchyConfiguration());
+        modelBuilder.ApplyConfiguration(new BrandConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }

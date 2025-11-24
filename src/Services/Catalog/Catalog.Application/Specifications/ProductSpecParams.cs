@@ -27,31 +27,4 @@ public class ProductSpecParams
     }
 
     private ProductSpecParams() { }
-
-    public ProductSpecParams(StatusEnum? status, bool? isInStock, int? brandId, decimal? minPrice, decimal? maxPrice, int? productHierarchyId,
-                        SortByEnum? sortBy, string? searchTerm, int pageIndex = 1, int pageSize = 10)
-    {
-        if (minPrice.HasValue && maxPrice.HasValue && minPrice.Value > maxPrice.Value)
-        {
-            throw new ArgumentException("MinPrice cannot be greater than MaxPrice.", nameof(minPrice));
-        }
-
-        Status = status;
-        IsInStock = isInStock;
-        BrandId = brandId;
-        MinPrice = minPrice;
-        MaxPrice = maxPrice;
-        ProductHierarchyId = productHierarchyId;
-        SortBy = sortBy;
-        SearchTerm = searchTerm;
-
-        PageIndex = pageIndex;
-        PageSize = pageSize;
-    }
-
-    public ProductSpecParams(StatusEnum? status, bool? isInStock, int? brandId, decimal? minPrice, decimal? maxPrice, int? productHierarchyId,
-        SortByEnum? sortBy, string? searchTerm) : this(status, isInStock, brandId, minPrice, maxPrice, productHierarchyId, sortBy, searchTerm, 1, 10)
-    {
-        // Passes to the main constructor with default pagination values
-    }
 }

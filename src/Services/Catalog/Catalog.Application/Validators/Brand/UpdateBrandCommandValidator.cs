@@ -17,6 +17,9 @@ public class UpdateBrandCommandValidator : AbstractValidator<UpdateBrandCommand>
                           .MaximumLength(50).WithMessage("Name length less than or equal to 50 characters")
                           .MinimumLength(5).WithMessage("Code length more than or equal to 5 characters");
 
+        RuleFor(x => x.Status).NotEmpty().WithMessage("Status is Required")
+                           .IsInEnum().WithMessage("Status is not valid");
+
         RuleFor(x => x.ModifiedBy)
                   .NotEmpty().WithMessage("Created User is required");
     }

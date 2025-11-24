@@ -1,5 +1,6 @@
 ﻿using Catalog.Application.Commands;
 using Catalog.Application.Queries;
+using Catalog.Application.Requests;
 using Catalog.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -9,100 +10,53 @@ namespace Catalog.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class BrandController : ControllerBase
+public class ProductHierarchyController : ControllerBase
 {
     private readonly IMediator _mediator;
-    public BrandController(IMediator mediator) => _mediator =  mediator;
+    public ProductHierarchyController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(StatusEnum status)
+    public async Task<IActionResult> GetAll([FromQuery] ProductHierarchyRequest request)
     {
-        try
-        {
-            var query = new GetBrandsQuery(status);
-            var dtos = await _mediator.Send(query);
-            return Ok(dtos);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-        
+        var query = new GetProductHierarchiesQuery(request.LevelId, request.ParentId, request.Status);
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        try
-        {
-            var query = new GetBrandByIdQuery(id);
-            var dto = await _mediator.Send(query);
-            if (dto is null) return NotFound();
-            return Ok(dto);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        var dto = await _mediator.Send(new GetProductHierarchyByIdQuery(id));
+        return dto is null ? NotFound() : Ok(dto);
     }
 
-    [HttpGet("GetByCode/{code}")]
-    public async Task<IActionResult> GetByCode([FromRoute] string code)
+    [HttpGet("by-code/{code}")]
+    public async Task<IActionResult> GetByCode(string code)
     {
-        try
-        {
-            var query = new GetBrandByCodeQuery(code);
-            var dto = await _mediator.Send(query);
-            if (dto is null) return NotFound();
-            return Ok(dto);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }   
+        var dto = await _mediator.Send(new GetProductHierarchyByCodeQuery(code));
+        return dto is null ? NotFound() : Ok(dto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(CreateBrandCommand command)
+    public async Task<IActionResult> Create([FromBody] CreateProductHierarchyCommand command)
     {
-        try
-        {
-            var id = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetById), new { id }, null);
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        var id = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id }, null);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateBrandCommand command)
+    public async Task<IActionResult> Update([FromRoute]int id, [FromBody] UpdateProductHierarchyCommand command)
     {
-        try
-        {
-            if (id != command.Id) return BadRequest("Id mismatch");
-            await _mediator.Send(command);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+        if (id != command.Id) return BadRequest("Id mismatch");
+        await _mediator.Send(command);
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProductHierarchy(int id, DeleteBrandCommand command)
+    public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] DeleteProductHierarchyCommand command)
     {
-        try
-        {
-            if (id != command.Id) return BadRequest("Id mismatch");
-            await _mediator.Send(command);
-            return NoContent();
-        }
-        catch (Exception ex) 
-        {
-            throw;
-        }
+        await _mediator.Send(command);
+        return NoContent();
     }
 }
+

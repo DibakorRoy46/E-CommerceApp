@@ -16,5 +16,10 @@ public class MappingProfile : Profile
         CreateMap<CreateBrandCommand, Brand>();
         CreateMap<BrandDto, Brand>();
         CreateMap<Brand, BrandDto>();
+        CreateMap<Product, ProductDto>();
+        CreateMap<ProductDto, Product>();
+        CreateMap<CreateProductCommand, Product>();
+        CreateMap<Product, CreateProductCommand>();
+
     }
 }

@@ -45,6 +45,11 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
         builder.Property(x => x.ModifiedBy)
                .HasMaxLength(100)
                .HasColumnName("modifiedby");
+
+        builder.HasOne(b => b.ProductHierarchy)
+            .WithMany()
+            .HasForeignKey(b => b.ProductHierarchyId)
+            .OnDelete(DeleteBehavior.Restrict);
         // Indexes
         builder.HasIndex(x => x.Code).IsUnique();
         builder.HasIndex(x => x.Name).IsUnique();

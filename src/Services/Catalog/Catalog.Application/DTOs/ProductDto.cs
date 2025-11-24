@@ -1,5 +1,7 @@
 ﻿
 
+using Catalog.Domain.Enums;
+
 namespace Catalog.Application.DTOs;
 
 public record ProductDto
@@ -16,6 +18,7 @@ public record ProductDto
         string BarCode,
         decimal Price,
         int StockQuantity,
+        StatusEnum Status,
         string ? CreatedBy,
         DateTimeOffset? CreatedDate,
         string? ModifiedBy,
