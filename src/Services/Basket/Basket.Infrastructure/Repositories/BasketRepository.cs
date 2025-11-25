@@ -23,8 +23,8 @@ public class BasketRepository : IBasketRepository
     {
         var entity=await _distributeCache.GetStringAsync(userName);
 
-        if(entity == null)
-            throw new KeyNotFoundException($"Basket is not found for {userName}");
+        if (entity == null)
+            return new ShoppingCart(userName);
 
         return JsonConvert.DeserializeObject<ShoppingCart>(entity) ;
     }

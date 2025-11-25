@@ -18,7 +18,7 @@ public class DeleteBasketByUserNameCommandHandler : IRequestHandler<DeleteBasket
     {
         var result = await _repo.GetBasketByUserNameAsync(request.UserName);
 
-        if (result != null)
+        if (result == null)
             throw new KeyNotFoundException($"Basket is not found by Username {request.UserName}");
 
         await _repo.DeleteBasketByUserNameAsync(request.UserName);
