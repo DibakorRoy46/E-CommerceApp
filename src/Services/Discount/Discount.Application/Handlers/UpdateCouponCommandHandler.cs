@@ -24,7 +24,6 @@ public class UpdateCouponCommandHandler : IRequestHandler<UpdateCouponCommand, C
         entity.Update(entity.Name, entity.Code, entity.Description, entity.Amount, entity.IsActive, entity.ModifiedBy);
         
         await _repo.UpdateCouponAsync(entity);
-        await _repo.SaveChangesAsync(cancellationToken);
         return _mapper.Map<CouponDto>(entity);
     }
 }

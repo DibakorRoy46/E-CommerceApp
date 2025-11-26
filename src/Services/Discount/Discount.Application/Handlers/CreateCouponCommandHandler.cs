@@ -20,9 +20,8 @@ public class CreateCouponCommandHandler : IRequestHandler<CreateCouponCommand, C
     }
     public async Task<CouponDto> Handle(CreateCouponCommand request, CancellationToken cancellationToken)
     {
-        var entity= _mapper.Map<Coupon>(request);
+        var entity= new Coupon(request.Name, request.Code, request.Description, request.Amount, request.IsActive,request.CreatedBy);
         await _repo.InsertCouponAsync(entity);
-        await _repo.SaveChangesAsync(cancellationToken);
         return _mapper.Map<CouponDto>(entity);
     }
 }

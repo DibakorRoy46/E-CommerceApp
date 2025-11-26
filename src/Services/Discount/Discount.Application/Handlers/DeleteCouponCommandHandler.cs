@@ -26,7 +26,6 @@ public class DeleteCouponCommandHandler : IRequestHandler<DeleteCouponCommand, b
         }
 
         await _repo.DeleteCouponAsync(request.Id);
-        await _repo.SaveChangesAsync();
         return true;
     }
 }
