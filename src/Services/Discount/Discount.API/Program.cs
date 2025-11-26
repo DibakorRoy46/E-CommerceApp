@@ -1,23 +1,43 @@
+using Discount.API.Services;
+using Discount.Application.Commands;
+using Discount.Application.Interfaces;
+using Discount.Application.Mapping;
+using Discount.Application.Validators;
+using Discount.Infrastrueture.Extensions;
+using Discount.Infrastrueture.Repositories;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddGrpc();
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddMediatR(cfg =>
+                 cfg.RegisterServicesFromAssembly(typeof(CreateCouponCommand).Assembly));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddValidatorsFromAssembly(typeof(CreateCouponCommandValidator).Assembly);
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+builder.Services.AddScoped<ICouponRepository, CouponRepository>();
 
 var app = builder.Build();
+app.UseRouting();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.MigrateDatabase<Program>();
+
+app.UseEndpoints(endpoints =>
 {
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+    endpoints.MapGrpcService<DiscountService>();
+    endpoints.MapGet("/", async context =>
+    {
+        await context.Response.WriteAsync(
+            "Communication with gRPC endpoints must be made through a gRPC client.");
+    });
+});
 
 app.Run();

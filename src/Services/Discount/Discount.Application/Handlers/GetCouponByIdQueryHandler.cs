@@ -3,7 +3,7 @@
 using AutoMapper;
 using Discount.Application.DTOs;
 using Discount.Application.Interfaces;
-using Discount.Application.Quiries;
+using Discount.Application.Queries;
 using MediatR;
 
 namespace Discount.Application.Handlers;
