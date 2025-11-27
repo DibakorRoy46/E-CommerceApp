@@ -1,0 +1,56 @@
+﻿
+syntax = "proto3";
+
+option csharp_namespace = "Discount.Grpc.Protos";
+import "google/protobuf/timestamp.proto";
+
+
+
+service DiscountProtoService {
+  rpc GetDiscounts(GetDiscountsRequest) returns (GetDiscountsResponse);
+  rpc GetDiscountById(GetDiscountByIdRequest) returns (CouponModel);
+  rpc GetDiscountByCode(GetDiscountByCodeRequest) returns(CouponModel);
+  rpc CreateDiscount(CreateDiscountRequest) returns (CouponModel);
+  rpc UpdateDiscount(UpdateDiscountRequest) returns (CouponModel);
+  rpc DeleteDiscount(DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+message GetDiscountByIdRequest {
+  int32 id = 1;
+}
+
+message GetDiscountByCodeRequest{
+	string code=1;
+}
+
+message GetDiscountsRequest{
+	int32 isActive=1;
+}
+
+message CouponModel {
+  int32 id=1;
+  string name = 2;
+  string code=3;
+  string description = 4;
+  string amount = 5;
+  int32 isActive = 6;
+}
+
+message GetDiscountsResponse {
+  repeated CouponModel coupons = 1;
+}
+
+message CreateDiscountRequest {
+  CouponModel coupon = 1;
+}
+message UpdateDiscountRequest {
+  CouponModel coupon = 1;
+}
+
+message DeleteDiscountRequest {
+  int32 id = 1;
+}
+
+message DeleteDiscountResponse {
+  bool success = 1;
+}
