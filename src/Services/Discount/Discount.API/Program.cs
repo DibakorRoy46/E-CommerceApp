@@ -8,9 +8,17 @@ using Discount.Infrastrueture.Repositories;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(8002, o =>
+    {
+        o.Protocols = HttpProtocols.Http2;
+    });
+});
 // Add services to the container.
 builder.Services.AddGrpc();
 

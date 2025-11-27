@@ -34,10 +34,6 @@ message CouponModel {
   string description = 4;
   string amount = 5;
   int32 isActive = 6;
-  string createdBy = 7;
-  google.protobuf.Timestamp createdDate=8;
-  string modifiedBy=9;
-  google.protobuf.Timestamp modifiedDate=10;
 }
 
 message GetDiscountsResponse {

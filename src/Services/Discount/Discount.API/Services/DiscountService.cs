@@ -30,11 +30,7 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
             Code = result.Code,
             Description = result.Description,
             IsActive = result.IsActive,
-            Amount = result.Amount.ToString(),
-            CreatedBy = result.CreatedBy,
-            CreatedDate = Timestamp.FromDateTime(result.CreatedDate.DateTime),
-            ModifiedBy = result.ModifiedBy,
-            ModifiedDate = Timestamp.FromDateTime(result.ModifiedDate.DateTime)
+            Amount = result.Amount.ToString()
         };
     }
 
@@ -49,11 +45,7 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
             Code = result.Code,
             Description = result.Description,
             IsActive = result.IsActive,
-            Amount = result.Amount.ToString(),
-            CreatedBy = result.CreatedBy,
-            CreatedDate = Timestamp.FromDateTime(result.CreatedDate.DateTime),
-            ModifiedBy = result.ModifiedBy,
-            ModifiedDate = Timestamp.FromDateTime(result.ModifiedDate.DateTime)
+            Amount = result.Amount.ToString()
         };
     }
 
@@ -72,11 +64,7 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
                 Code = x.Code,
                 Description = x.Description,
                 IsActive = x.IsActive,
-                Amount = x.Amount.ToString(),  // if you use string for decimal
-                CreatedBy = x.CreatedBy,
-                CreatedDate = Timestamp.FromDateTime(x.CreatedDate.DateTime),
-                ModifiedBy = x.ModifiedBy,
-                ModifiedDate = Timestamp.FromDateTime(x.ModifiedDate.DateTime)
+                Amount = x.Amount.ToString()
             })
         );
 
@@ -86,7 +74,7 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
     public async override Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
     {
         var command= new CreateCouponCommand(request.Coupon.Name,request.Coupon.Code,request.Coupon.Description,
-                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive,request.Coupon.CreatedBy);
+                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive,string.Empty);
 
         var result= await _mediator.Send(command);
 
@@ -97,18 +85,14 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
             Code = result.Code,
             Description = result.Description,
             IsActive = result.IsActive,
-            Amount = result.Amount.ToString(),
-            CreatedBy = result.CreatedBy,
-            CreatedDate = Timestamp.FromDateTime(result.CreatedDate.DateTime),
-            ModifiedBy = result.ModifiedBy,
-            ModifiedDate = Timestamp.FromDateTime(result.ModifiedDate.DateTime)
+            Amount = result.Amount.ToString()
         };
     }
 
     public async override Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
     {
         var command = new UpdateCouponCommand(request.Coupon.Id, request.Coupon.Name, request.Coupon.Code, request.Coupon.Description,
-                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive, request.Coupon.ModifiedBy);
+                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive, string.Empty);
 
         var result = await _mediator.Send(command);
 
@@ -119,11 +103,7 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
             Code = result.Code,
             Description = result.Description,
             IsActive = result.IsActive,
-            Amount = result.Amount.ToString(),
-            CreatedBy = result.CreatedBy,
-            CreatedDate = Timestamp.FromDateTime(result.CreatedDate.DateTime),
-            ModifiedBy = result.ModifiedBy,
-            ModifiedDate = Timestamp.FromDateTime(result.ModifiedDate.DateTime)
+            Amount = result.Amount.ToString()
         };
     }
 
