@@ -30,8 +30,7 @@ public class BasketRepository : IBasketRepository
     }
 
     public async Task<ShoppingCart> UpsertBasketAsync(ShoppingCart shoppingCart)
-    {
-        
+    {  
         await _distributeCache.SetStringAsync(shoppingCart.UserName, JsonConvert.SerializeObject(shoppingCart));
         return await GetBasketByUserNameAsync(shoppingCart.UserName);
     }
