@@ -8,6 +8,8 @@ namespace Basket.Application.Responses
         {
             
         }
-        public decimal TotalPrice => items.Sum(x => x.Quantity * x.Price);
+        public decimal Discount { get; set; }
+        public decimal TotalPrice => items.Sum(x => x.Quantity * x.Price) ;
+        
     }
 }
