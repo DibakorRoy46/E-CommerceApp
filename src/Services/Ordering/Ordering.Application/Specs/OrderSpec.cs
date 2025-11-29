@@ -7,10 +7,15 @@ public class OrderSpec
 {
     public OrderStatusEnum? OrderStatus { get; private set; }
     public PaymentMethodEnum? PaymentMethod { get; private set; }
+    public DateTime? StartDate { get; private set; }
 
-    public OrderSpec(OrderStatusEnum? orderStatus, PaymentMethodEnum paymentMethod)
+    public DateTime? EndDate { get; private set; }
+
+    public OrderSpec(OrderStatusEnum? orderStatus, PaymentMethodEnum paymentMethod, DateTime? startDate, DateTime? endDate)
     {
         OrderStatus = orderStatus;
         PaymentMethod = paymentMethod;
+        StartDate = startDate;
+        EndDate = endDate;
     }
 }

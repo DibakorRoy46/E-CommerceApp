@@ -5,7 +5,7 @@ namespace Ordering.Domain.Entities;
 
 public class Order : BaseEntity
 {
-    public int Id { get; protected set; }
+    public int OrderId { get; protected set; }
     public string UserId { get; protected set; }
     public string? UserName { get; protected set; }
     public decimal? GrossValue { get; protected set; }
