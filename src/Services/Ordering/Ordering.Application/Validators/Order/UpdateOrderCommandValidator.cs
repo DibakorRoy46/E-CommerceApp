@@ -4,7 +4,7 @@ using Ordering.Application.Commands;
 
 namespace Ordering.Application.Validators;
 
-public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommnad>
+public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
 {
     public UpdateOrderCommandValidator()
     {

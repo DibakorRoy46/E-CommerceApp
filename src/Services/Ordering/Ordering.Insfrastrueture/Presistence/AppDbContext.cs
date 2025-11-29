@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
 using Ordering.Domain.Entities;
+using Ordering.Insfrastrueture.Presistence.Configurations;
 
 namespace Ordering.Insfrastrueture.Presistence;
 

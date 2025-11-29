@@ -1,3 +1,14 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Ordering.Application.Commands;
+using Ordering.Application.Logger;
+using Ordering.Application.Mapping;
+using Ordering.Application.Repositories;
+using Ordering.Application.Validators;
+using Ordering.Insfrastrueture.Presistence;
+using Ordering.Insfrastrueture.Repositories;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Sinks.Elasticsearch;
@@ -38,21 +49,37 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
+//Database Connection
+builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+                sqlServerOptions => sqlServerOptions.EnableRetryOnFailure()));
+
+//Add Services
+builder.Services.AddMediatR(cfg =>
+                 cfg.RegisterServicesFromAssembly(typeof(CreateOrderCommand).Assembly));
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddValidatorsFromAssembly(typeof(CreateOrderCommandValidator).Assembly);
+
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+
+// MediatR pipeline logging
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+
+// Repositories
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+// Middleware
+app.UseSerilogRequestLogging(); // logs all HTTP requests
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapControllers();
 
 app.Run();

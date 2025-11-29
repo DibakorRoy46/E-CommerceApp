@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Ordering.Domain.Entities;
 
-namespace Ordering.Insfrastrueture.Presistence;
+namespace Ordering.Insfrastrueture.Presistence.Configurations;
 
 public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 {
@@ -36,11 +36,10 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.Property(x => x.ItemWiseDicount)
             .HasPrecision(18, 2);
 
+        builder.HasOne(x => x.Order)
+       .WithMany(o => o.OrderItems)
+       .HasForeignKey(x => x.OrderId)
+       .OnDelete(DeleteBehavior.Restrict);
 
-        // ⭐ Foreign key relationship configuration
-        builder.HasOne<Order>()
-            .WithMany(o => o.OrderItems)
-            .HasForeignKey(x => x.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

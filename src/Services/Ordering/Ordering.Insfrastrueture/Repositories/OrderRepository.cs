@@ -23,10 +23,11 @@ public class OrderRepository : IOrderRepository
 
     public async Task<bool> DeleteOrderAsync(int orderId)
     {
-        var entity= await _db.Orders.AsNoTracking().FirstOrDefaultAsync(x=>x.OrderId==orderId);
+        var entity= await _db.Orders.Include(x=>x.OrderItems).AsNoTracking().FirstOrDefaultAsync(x=>x.OrderId==orderId);
         if (entity == null)
             throw new Exception("Order is not Exist");
 
+        _db.OrderItems.RemoveRange(entity.OrderItems);
         _db.Orders.Remove(entity);
         return true;
 

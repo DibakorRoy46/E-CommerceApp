@@ -58,9 +58,9 @@ public class Order : BaseEntity
         SetCreated(userId);
     }
 
-    public void Update(int id, OrderStatusEnum orderStatus, string remarks,string modifiedBy )
+    public void Update(int orderId, OrderStatusEnum orderStatus, string remarks,string modifiedBy )
     {
-        Id = id;
+        OrderId = orderId;
         Status = orderStatus;
         Remarks=  $"Order status changed to {orderStatus}.{remarks}";
         SetModified(modifiedBy);

@@ -8,7 +8,7 @@ using Ordering.Domain.Entities;
 
 namespace Ordering.Application.Handlers;
 
-public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommnad, OrderDto>
+public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, OrderDto>
 {
     private readonly IOrderRepository _repo;
     private readonly IMapper _mapper;
@@ -18,7 +18,7 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommnad, Ord
         _repo = repo;
         _mapper = mapper;
     }
-    public async Task<OrderDto> Handle(UpdateOrderCommnad request, CancellationToken cancellationToken)
+    public async Task<OrderDto> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
         var orderEntity = _mapper.Map<Order>(request.Order);
 
