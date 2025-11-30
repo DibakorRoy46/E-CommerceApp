@@ -15,8 +15,8 @@ public class MappingProfile :Profile
         CreateMap<Order, OrderDto>();
         CreateMap<OrderItem, OrderItemDto>();
         CreateMap<OrderItemDto, OrderItem>();
-        CreateMap<CreateOrderCommand, Order>();
-        CreateMap<Order, CreateOrderCommand>();
+        CreateMap<CreateOrderCommand, Order>()
+            .ForMember(d => d.OrderItems, o => o.Ignore());
         CreateMap<CreateOrderCommand, OrderDto>();
         CreateMap<OrderItemDto, UpdateOrderCommand>();
         CreateMap<UpdateOrderCommand, OrderItemDto>();

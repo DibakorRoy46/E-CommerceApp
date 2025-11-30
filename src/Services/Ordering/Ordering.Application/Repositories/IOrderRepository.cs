@@ -7,7 +7,7 @@ namespace Ordering.Application.Repositories;
 public interface IOrderRepository
 {
     Task<Order> AddOrderAsync(Order order);
-    Task<bool> UpdateOrderAsync(Order order);
+    Task<Order> UpdateOrderAsync(Order order);
     Task<bool> DeleteOrderAsync(int orderId);
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
     Task<Order?> GetOrderByIdAsync(int orderId, CancellationToken cancellationToken = default);

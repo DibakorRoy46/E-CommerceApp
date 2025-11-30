@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Ordering.Application.Commands;
 using Ordering.Application.DTOs;
+using Ordering.Application.Exceptions;
 using Ordering.Application.Repositories;
 using Ordering.Domain.Entities;
 
@@ -20,7 +21,12 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Ord
     }
     public async Task<OrderDto> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
-        var orderEntity = _mapper.Map<Order>(request);
+        var orderEntity = await _repo.GetOrderByIdAsync(request.OrderId, cancellationToken);
+
+        if(orderEntity == null)
+        {
+            throw new OrderNotFoundException(request.OrderId,request.UserId,string.Empty);
+        }
 
         foreach (var item in request.OrderItems)
         {

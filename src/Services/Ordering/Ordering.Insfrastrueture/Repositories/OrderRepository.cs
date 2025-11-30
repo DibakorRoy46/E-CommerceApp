@@ -71,9 +71,9 @@ public class OrderRepository : IOrderRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> UpdateOrderAsync(Order order)
+    public async Task<Order> UpdateOrderAsync(Order order)
     {
         _db.Orders.Update(order);
-        return await Task.FromResult(true);
+        return order;
     }
 }
