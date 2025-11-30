@@ -20,12 +20,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
     }
     public async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var orderEntity = _mapper.Map<Order>(request.Order);
-
-        foreach (var item in request.Order.OrderItems)
-        {
-            orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDicount);
-        }
+        var orderEntity = _mapper.Map<Order>(request);
         var createdOrder = await _repo.AddOrderAsync(orderEntity);
         await _repo.SaveChangesAsync(cancellationToken);
         return _mapper.Map<OrderDto>(createdOrder);

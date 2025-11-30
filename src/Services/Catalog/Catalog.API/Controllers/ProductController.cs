@@ -15,7 +15,7 @@ namespace Catalog.API.Controllers
 
         public ProductController(IMediator mediator) => _mediator = mediator;
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<IActionResult> GetAll([FromQuery] ProductRequest request)
         {
             var query= new GetProductsQuery(request.Status);

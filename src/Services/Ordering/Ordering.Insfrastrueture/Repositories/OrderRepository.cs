@@ -15,10 +15,10 @@ public class OrderRepository : IOrderRepository
     {
         _db = db;
     }
-    public async Task<bool> AddOrderAsync(Order order)
+    public async Task<Order> AddOrderAsync(Order order)
     {
-        var result= await _db.Orders.AddAsync(order);
-        return result.State == EntityState.Added;
+        await _db.Orders.AddAsync(order);
+        return order;
     }
 
     public async Task<bool> DeleteOrderAsync(int orderId)

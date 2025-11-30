@@ -17,6 +17,7 @@ public class MappingProfile :Profile
         CreateMap<OrderItemDto, OrderItem>();
         CreateMap<CreateOrderCommand, Order>();
         CreateMap<Order, CreateOrderCommand>();
+        CreateMap<CreateOrderCommand, OrderDto>();
         CreateMap<OrderItemDto, UpdateOrderCommand>();
         CreateMap<UpdateOrderCommand, OrderItemDto>();
     }

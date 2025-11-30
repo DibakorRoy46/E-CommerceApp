@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Ordering.Application.Commands;
+using Ordering.Application.DTOs;
 using Ordering.Application.Queries;
 using Ordering.Application.Specs;
 
@@ -18,7 +19,7 @@ namespace Ordering.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
+        [HttpGet()]
         public async Task<IActionResult> GetProducts([FromQuery] OrderSpec orderSpec)
         {
             var result = await _mediator.Send(new GetAllOrdersQuery(orderSpec));
@@ -26,7 +27,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpGet("{orderId}")]
-        public async Task<IActionResult> GetOrderById([FromQuery] int orderId)
+        public async Task<IActionResult> GetOrderById([FromRoute] int orderId)
         {
             string userId = "test-user"; // In a real application, retrieve the user ID from the authenticated user context
             var result = await _mediator.Send(new GetOrderByIdQuery(orderId, userId));
@@ -36,7 +37,7 @@ namespace Ordering.API.Controllers
         }
 
         [HttpGet("by-username/{userName}")]
-        public async Task<IActionResult> GetOrderByName([FromQuery] string userName)
+        public async Task<IActionResult> GetOrderByName([FromRoute] string userName)
         {
             var result = await _mediator.Send(new GetOrderByUserNameQuery(userName));
             return Ok(result);
@@ -45,14 +46,14 @@ namespace Ordering.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderCommand command)
         {
-            var orderId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetOrderById), new { orderId }, null);
+            var order = await _mediator.Send(command);
+            return Ok(order);
         }
 
         [HttpPut("{orderId}")]
         public async Task<IActionResult> UpdateOrder([FromRoute] int orderId, [FromBody] UpdateOrderCommand command)
         {
-            if (orderId != command.Order.OrderId)
+            if (orderId != command.OrderId)
                 return BadRequest("Order ID mismatch");
             await _mediator.Send(command);
             return NoContent();

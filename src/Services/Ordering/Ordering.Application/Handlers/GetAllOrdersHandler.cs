@@ -7,7 +7,7 @@ using Ordering.Application.Repositories;
 
 namespace Ordering.Application.Handlers;
 
-public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, IEnumerable<OrderDto>>
+public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, List<OrderDto>>
 {
     private readonly IOrderRepository _repo;
     private readonly IMapper _mapper;
@@ -17,9 +17,10 @@ public class GetAllOrdersHandler : IRequestHandler<GetAllOrdersQuery, IEnumerabl
         _repo = repo;
         _mapper = mapper;
     }
-    public async Task<IEnumerable<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
+
+    public async Task<List<OrderDto>> Handle(GetAllOrdersQuery request, CancellationToken cancellationToken)
     {
         var orders = await _repo.GetAllOrdersAsync(request.OrderSpec, cancellationToken);
-        return _mapper.Map<IEnumerable<OrderDto>>(orders);
+        return _mapper.Map<List<OrderDto>>(orders);
     }
 }

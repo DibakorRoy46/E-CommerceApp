@@ -20,9 +20,9 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Ord
     }
     public async Task<OrderDto> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
     {
-        var orderEntity = _mapper.Map<Order>(request.Order);
+        var orderEntity = _mapper.Map<Order>(request);
 
-        foreach (var item in request.Order.OrderItems)
+        foreach (var item in request.OrderItems)
         {
             var existingItem = orderEntity.OrderItems
                 .FirstOrDefault(oi => oi.ProductId == item.ProductId);

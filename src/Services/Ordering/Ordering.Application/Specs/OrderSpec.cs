@@ -11,13 +11,13 @@ public class OrderSpec
 
     public DateTime? EndDate { get; private set; }
 
-    private OrderSpec() { }
+    public OrderSpec() { }
 
-    //public OrderSpec(OrderStatusEnum? orderStatus, PaymentMethodEnum paymentMethod, DateTime? startDate, DateTime? endDate)
-    //{
-    //    OrderStatus = orderStatus;
-    //    PaymentMethod = paymentMethod;
-    //    StartDate = startDate;
-    //    EndDate = endDate;
-    //}
+    public OrderSpec(OrderStatusEnum? orderStatus, PaymentMethodEnum? paymentMethod, DateTime? startDate, DateTime? endDate)
+    {
+        OrderStatus = orderStatus;
+        PaymentMethod = paymentMethod;
+        StartDate = startDate;
+        EndDate = endDate;
+    }
 }
