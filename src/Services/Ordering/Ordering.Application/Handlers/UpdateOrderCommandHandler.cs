@@ -34,7 +34,7 @@ public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, Ord
                 .FirstOrDefault(oi => oi.ProductId == item.ProductId);
             if (existingItem != null)
             {
-                orderEntity.UpdateItem(item.ProductId, item.Quantity, item.ItemWiseDicount);
+                orderEntity.UpdateItem(item.ProductId, item.Quantity, item.ItemWiseDiscount);
             }
         }
 

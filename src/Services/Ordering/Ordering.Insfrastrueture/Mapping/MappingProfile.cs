@@ -1,11 +1,11 @@
 ﻿
-
 using AutoMapper;
+using EventBus.Messages.Events;
 using Ordering.Application.Commands;
 using Ordering.Application.DTOs;
 using Ordering.Domain.Entities;
 
-namespace Ordering.Application.Mapping;
+namespace Ordering.Insfrastrueture.Mapping;
 
 public class MappingProfile :Profile
 {
@@ -20,5 +20,8 @@ public class MappingProfile :Profile
         CreateMap<CreateOrderCommand, OrderDto>();
         CreateMap<OrderItemDto, UpdateOrderCommand>();
         CreateMap<UpdateOrderCommand, OrderItemDto>();
+        CreateMap<BasketCheckoutEvent, CreateOrderCommand>();
+        CreateMap<BasketItemEvent, OrderItemDto>();
+
     }
 }

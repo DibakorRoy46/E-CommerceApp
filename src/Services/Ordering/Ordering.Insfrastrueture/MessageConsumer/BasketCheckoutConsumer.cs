@@ -2,7 +2,7 @@
 using AutoMapper;
 using EventBus.Messages.Events;
 using MassTransit;
-using MassTransit.Mediator;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Ordering.Application.Commands;
 

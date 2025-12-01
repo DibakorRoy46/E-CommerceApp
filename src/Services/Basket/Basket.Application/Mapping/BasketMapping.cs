@@ -27,8 +27,12 @@ public static class BasketMapping
     {
         return new BasketCheckoutEvent
         {
+            UserId = dto.UserName,
             UserName = dto.UserName,
-            TotalPrice = basket.Items.Sum(item => item.Price * item.Quantity),
+            GrossValue = basket.Items.Sum(item => item.Price * item.Quantity),
+            DiscountValue = basket.Discount,
+            NetValue = basket.Items.Sum(item => item.Price * item.Quantity) - basket.Discount,
+            NumberOfItems = basket.Items.Count,
             FirstName = dto.FirstName,
             LastName = dto.LastName,
             EmailAddress = dto.EmailAddress,
@@ -41,12 +45,13 @@ public static class BasketMapping
             Expiration = dto.Expiration,
             Cvv = dto.Cvv,
             PaymentMethod = dto.PaymentMethod,
+            Remarks = dto.Remarks,
             OrderItems = basket.Items.Select(i => new BasketItemEvent
             {
                 ProductId = i.ProductId,
                 ProductName = i.ProductName,
-                ProduceCode = i.ProduceCode,
-                Price = i.Price,
+                ProductCode = i.ProductCode,
+                UnitPrice = i.Price,
                 Quantity = i.Quantity,
                 ItemWiseDiscount = i.ItemWiseDiscount
             }).ToList()

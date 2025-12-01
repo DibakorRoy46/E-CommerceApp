@@ -16,5 +16,6 @@ public record BasketCheckoutDto
         string CardNumber ,
         string Expiration ,
         string Cvv ,
-        int PaymentMethod 
+        int PaymentMethod ,
+        string Remarks
     );

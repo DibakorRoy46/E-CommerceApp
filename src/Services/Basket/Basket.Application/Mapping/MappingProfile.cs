@@ -1,5 +1,6 @@
 ﻿
 using AutoMapper;
+using Basket.Application.Commands;
 using Basket.Application.DTOs;
 using Basket.Application.Responses;
 using Basket.Domain.Entities;
@@ -14,5 +15,6 @@ public class MappingProfile : Profile
         CreateMap<ShoppingCartItem, ShoppingCartItemResponse>();
         CreateMap<ShoppingCartItemDto, ShoppingCartItem>();
         CreateMap<ShoppingCartResponse, ShoppingCart>();
+        CreateMap<CheckoutBasketCommand, BasketCheckoutDto>();
     }
 }

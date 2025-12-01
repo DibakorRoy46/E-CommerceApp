@@ -38,6 +38,9 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
     {
         var query = new GetCouponByCodeQuery(request.Code);
         var result = await _mediator.Send(query);
+        if (result == null)
+            return new CouponModel();
+
         return new CouponModel()
         {
             Id = result.Id,

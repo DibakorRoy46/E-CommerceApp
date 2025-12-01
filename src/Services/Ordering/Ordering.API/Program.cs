@@ -1,12 +1,15 @@
+using EventBus.Messages.Common;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Commands;
 using Ordering.Application.Logger;
-using Ordering.Application.Mapping;
+using Ordering.Insfrastrueture.Mapping;
 using Ordering.Application.Repositories;
 using Ordering.Application.Validators;
+using Ordering.Insfrastrueture.MessageConsumer;
 using Ordering.Insfrastrueture.Presistence;
 using Ordering.Insfrastrueture.Repositories;
 using Serilog;
@@ -73,6 +76,25 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Consume RabiitMQ Events
+
+builder.Services.AddMassTransit(config =>
+{
+    config.AddConsumer<BasketCheckoutConsumer>();
+
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+
+        cfg.ReceiveEndpoint(EventBusConstant.BasketCheckoutQueue, c =>
+        {
+            c.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
+        });
+    });
+});
+
+
 
 var app = builder.Build();
 

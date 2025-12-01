@@ -23,7 +23,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var orderEntity = _mapper.Map<Order>(request);
         foreach (var item in request.OrderItems)
         {
-            orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDicount);
+            orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDiscount);
         }
         var createdOrder = await _repo.AddOrderAsync(orderEntity);
         await _repo.SaveChangesAsync(cancellationToken);
