@@ -1,7 +1,8 @@
 ﻿
-namespace Basket.Domain.Entities;
 
-public class ShoppingCartItem
+namespace EventBus.Messages.Events;
+
+public class BasketItemEvent
 {
     public int ProductId { get; set; }
     public string ImageFile { get; set; }

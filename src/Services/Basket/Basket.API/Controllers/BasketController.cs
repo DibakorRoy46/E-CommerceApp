@@ -13,29 +13,36 @@ namespace Basket.API.Controllers
 
         public BasketController(IMediator mediator)
         {
-            _mediator = mediator;   
+            _mediator = mediator;
         }
 
         [HttpGet("{userName}")]
         public async Task<IActionResult> GetBasket([FromRoute] string userName)
         {
-            var query= new GetBasketByUserNameQuery(userName);
-            var result=await _mediator.Send(query);
+            var query = new GetBasketByUserNameQuery(userName);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateOrUpdateBasket([FromBody] CreateShoppingCartCommand command)
         {
-            var result= await _mediator.Send(command);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteBasket([FromBody] DeleteBasketByUserNameCommand command)
         {
-            var result= await _mediator.Send(command);
+            var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        [HttpPost("checkout")]
+        public async Task<IActionResult> CheckoutBasket([FromBody] CheckoutBasketCommand command)
+        {
+            await _mediator.Send(command);
+            return Accepted();
         }
     }
 }
