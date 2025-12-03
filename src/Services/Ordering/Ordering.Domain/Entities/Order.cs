@@ -66,7 +66,7 @@ public class Order : BaseEntity
         SetModified(modifiedBy);
     }
 
-    public void AddItem(string productId, string productName, string productCode,
+    public void AddItem(int productId, string productName, string productCode,
                     decimal unitPrice, int quantity, decimal discount)
     {
         var item = new OrderItem( productId, productName, productCode,
@@ -80,7 +80,7 @@ public class Order : BaseEntity
         NetValue = GrossValue - DiscountValue;
     }
 
-    public void UpdateItem(string productId, int quantity, decimal discount)
+    public void UpdateItem(int productId, int quantity, decimal discount)
     {
         var item = OrderItems.FirstOrDefault(x => x.ProductId == productId);
 

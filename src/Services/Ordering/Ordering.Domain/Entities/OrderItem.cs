@@ -1,14 +1,17 @@
 ﻿
 
+using System.Text.Json.Serialization;
+
 namespace Ordering.Domain.Entities;
 
 public class OrderItem
 {
     public int OrderItemid { get; protected set; }
     public int OrderId { get; protected set; }
+    [JsonIgnore]
     public Order Order { get; protected set; }
 
-    public string ProductId { get; protected set; }
+    public int ProductId { get; protected set; }
     public string ProductName { get; protected set; }
     public string ProductCode { get; protected set; }
     public decimal UnitPrice { get; protected set; }
@@ -17,7 +20,7 @@ public class OrderItem
 
     private OrderItem() { }
 
-    public OrderItem(string productId, string productName, string productCode,
+    public OrderItem(int productId, string productName, string productCode,
                      decimal unitPrice, int quantity, decimal discount)
     {
         ProductId = productId;

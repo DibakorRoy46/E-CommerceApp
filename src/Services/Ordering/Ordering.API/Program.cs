@@ -6,9 +6,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ordering.Application.Commands;
 using Ordering.Application.Logger;
-using Ordering.Insfrastrueture.Mapping;
 using Ordering.Application.Repositories;
 using Ordering.Application.Validators;
+using Ordering.Insfrastrueture.Dispatcher;
+using Ordering.Insfrastrueture.Mapping;
 using Ordering.Insfrastrueture.MessageConsumer;
 using Ordering.Insfrastrueture.Presistence;
 using Ordering.Insfrastrueture.Repositories;
@@ -76,6 +77,9 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Register Outbox Message Dispatcher
+builder.Services.AddHostedService<OutboxMessageDispatcher>();
 
 //Consume RabiitMQ Events
 

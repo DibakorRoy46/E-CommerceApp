@@ -3,6 +3,7 @@ using AutoMapper;
 using MediatR;
 using Ordering.Application.Commands;
 using Ordering.Application.DTOs;
+using Ordering.Application.Mapping;
 using Ordering.Application.Repositories;
 using Ordering.Domain.Entities;
 
@@ -26,6 +27,8 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
             orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDiscount);
         }
         var createdOrder = await _repo.AddOrderAsync(orderEntity);
+        var outboxMessage = OrderMapping.MapOutboMessage(createdOrder);
+        await _repo.SaveOutboxMessageAsync(outboxMessage);
         await _repo.SaveChangesAsync(cancellationToken);
         return _mapper.Map<OrderDto>(createdOrder);
     }

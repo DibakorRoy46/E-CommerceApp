@@ -13,4 +13,5 @@ public interface IOrderRepository
     Task<Order?> GetOrderByIdAsync(int orderId, CancellationToken cancellationToken = default);
     Task<List<Order>> GetOrderByNameAsync(string userName, CancellationToken cancellationToken = default);
     Task<List<Order>> GetAllOrdersAsync(OrderSpec orderSpec, CancellationToken cancellationToken = default);
+    Task SaveOutboxMessageAsync(OutboxMessage outboxMessage);
 }

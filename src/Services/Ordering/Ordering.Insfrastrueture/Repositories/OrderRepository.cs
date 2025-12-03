@@ -71,6 +71,11 @@ public class OrderRepository : IOrderRepository
         await _db.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task SaveOutboxMessageAsync(OutboxMessage outboxMessage)
+    {
+        await _db.OutboxMessages.AddAsync(outboxMessage);
+    }
+
     public async Task<Order> UpdateOrderAsync(Order order)
     {
         _db.Orders.Update(order);
