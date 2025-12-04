@@ -20,11 +20,6 @@ public class GetCouponByCodeQueryHandler : IRequestHandler<GetCouponByCodeQuery,
     public async Task<CouponDto> Handle(GetCouponByCodeQuery request, CancellationToken cancellationToken)
     {
         var coupon= await _repo.GetCouponByCodeAsync(request.Code, cancellationToken);
-
-        if (coupon == null)
-        {
-            throw new KeyNotFoundException($"Coupon is not found name {request.Code}");
-        }
         return _mapper.Map<CouponDto>(coupon); 
     }
 }

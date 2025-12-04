@@ -1,0 +1,19 @@
+﻿
+using FluentValidation;
+using Ordering.Application.Commands;
+
+namespace Ordering.Application.Validators;
+
+public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
+{
+    public UpdateOrderCommandValidator()
+    {
+        RuleFor(c => c).NotNull().WithMessage("Order cannot be null");
+        RuleFor(c => c.OrderId).GreaterThan(0).WithMessage("Order Id must be greater than zero");
+        RuleFor(c => c.UserId).NotEmpty().WithMessage("UserId can not be null");
+        RuleFor(c => c.UserName).NotEmpty().WithMessage("UserName is required");
+        RuleFor(c => c.OrderItems.Count).GreaterThan(0).WithMessage("Order must have at least one item");
+        RuleFor(c=> c.OrderItems.Any(x=>x.Quantity <=0)).Equal(false).WithMessage("Order items must have quantity greater than zero");
+        RuleFor(c=> c.OrderItems.Any(x=>x.UnitPrice <=0)).Equal(false).WithMessage("Order items must have quantity greater than zero");
+    }
+}

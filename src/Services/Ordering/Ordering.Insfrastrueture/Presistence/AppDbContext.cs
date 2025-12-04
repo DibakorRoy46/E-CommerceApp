@@ -1,0 +1,23 @@
+﻿
+using Microsoft.EntityFrameworkCore;
+using Ordering.Domain.Entities;
+using Ordering.Insfrastrueture.Presistence.Configurations;
+
+namespace Ordering.Insfrastrueture.Presistence;
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    { }
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new OrderConfiguration());
+        modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration());
+
+        base.OnModelCreating(modelBuilder);
+    }
+}

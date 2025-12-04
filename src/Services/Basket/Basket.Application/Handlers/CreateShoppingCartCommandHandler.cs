@@ -28,7 +28,7 @@ public class CreateShoppingCartCommandHandler : IRequestHandler<CreateShoppingCa
 
         var coupon = await _grpcService.GetCouponByCode(request.CouponCode);
         decimal discount = 0;
-        if (coupon != null)
+        if (coupon != null && coupon.Id >0 )
         {
             discount =Convert.ToDecimal( coupon.Amount);
         }

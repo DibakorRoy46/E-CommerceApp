@@ -1,0 +1,45 @@
+﻿
+using AutoMapper;
+using MediatR;
+using Ordering.Application.Commands;
+using Ordering.Application.DTOs;
+using Ordering.Application.Exceptions;
+using Ordering.Application.Repositories;
+using Ordering.Domain.Entities;
+
+namespace Ordering.Application.Handlers;
+
+public class UpdateOrderCommandHandler : IRequestHandler<UpdateOrderCommand, OrderDto>
+{
+    private readonly IOrderRepository _repo;
+    private readonly IMapper _mapper;
+
+    public UpdateOrderCommandHandler(IOrderRepository repo, IMapper mapper)
+    {
+        _repo = repo;
+        _mapper = mapper;
+    }
+    public async Task<OrderDto> Handle(UpdateOrderCommand request, CancellationToken cancellationToken)
+    {
+        var orderEntity = await _repo.GetOrderByIdAsync(request.OrderId, cancellationToken);
+
+        if(orderEntity == null)
+        {
+            throw new OrderNotFoundException(request.OrderId,request.UserId,string.Empty);
+        }
+
+        foreach (var item in request.OrderItems)
+        {
+            var existingItem = orderEntity.OrderItems
+                .FirstOrDefault(oi => oi.ProductId == item.ProductId);
+            if (existingItem != null)
+            {
+                orderEntity.UpdateItem(item.ProductId, item.Quantity, item.ItemWiseDiscount);
+            }
+        }
+
+        var updatedOrder = await _repo.UpdateOrderAsync(orderEntity);
+        await _repo.SaveChangesAsync(cancellationToken);
+        return _mapper.Map<OrderDto>(updatedOrder);
+    }
+}
