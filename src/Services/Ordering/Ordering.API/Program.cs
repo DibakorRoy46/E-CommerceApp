@@ -1,4 +1,5 @@
 using EventBus.Messages.Common;
+using EventBus.Messages.Events;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MassTransit;
@@ -86,6 +87,8 @@ builder.Services.AddHostedService<OutboxMessageDispatcher>();
 builder.Services.AddMassTransit(config =>
 {
     config.AddConsumer<BasketCheckoutConsumer>();
+    config.AddConsumer<PaymentSuccessConsumer>(); 
+    config.AddConsumer<PaymentFailedConsumer>(); 
 
     config.UsingRabbitMq((ctx, cfg) =>
     {
@@ -94,6 +97,18 @@ builder.Services.AddMassTransit(config =>
         cfg.ReceiveEndpoint(EventBusConstant.BasketCheckoutQueue, c =>
         {
             c.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
+        });
+
+        //Payement Success
+        cfg.ReceiveEndpoint(EventBusConstant.PaymentSuccessQueue, c =>
+        {
+            c.ConfigureConsumer<PaymentSuccessConsumer>(ctx);
+        });
+
+        //Payment Failed
+        cfg.ReceiveEndpoint(EventBusConstant.PaymentFailedQueue, c =>
+        {
+            c.ConfigureConsumer<PaymentFailedConsumer>(ctx);
         });
     });
 });

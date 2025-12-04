@@ -1,10 +1,11 @@
 ﻿
 namespace EventBus.Messages.Events;
 
-public class OrderCreatedEvent
+public class OrderCreatedEvent : BaseIntegretionEvent
 {
     public string UserId { get; set; }
     public string UserName { get; set; }
+    public int OrderId { get; set; }    
     public decimal GrossValue { get; set; }
     public decimal NetValue { get; set; }
     public decimal DiscountValue { get; set; }
