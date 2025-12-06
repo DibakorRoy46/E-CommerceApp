@@ -178,7 +178,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/Brand/by-code/{id}",
+      "DownstreamPathTemplate": "/api/Brand/by-category/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -186,11 +186,8 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand/by-code/{id}",
+      "UpstreamPathTemplate": "/Brand/by-category/{id}",
       "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer"
-      },
       "AddHeadersToRequest": {
         "x-correlation-id": "{X-Correlation-Id}"
       }

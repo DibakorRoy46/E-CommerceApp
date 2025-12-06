@@ -51,6 +51,7 @@ public class BrandController : ControllerBase
         return Ok(dto);
     }
 
+    [AllowAnonymous]
     [HttpGet("by-category/{categoryId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
