@@ -1,5 +1,6 @@
 ﻿
 using Catalog.Application.Interfaces;
+using Catalog.Application.Responses;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,28 @@ public class BrandRepository : IBrandRepository
             brands = brands.Where(x => x.Status == status);
         }
         return await brands.ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<BrandResponse>> GetBrandsByCategoryAsync(int? categoryId, CancellationToken cancellationToken = default)
+    {
+        var query = from b in _db.Brands.AsNoTracking()
+                    join sub in _db.ProductHierarchies.AsNoTracking()
+                        on b.ProductHierarchyId equals sub.Id
+                    join cat in _db.ProductHierarchies.AsNoTracking()
+                        on sub.ParentId equals cat.Id
+                    where
+                        (categoryId == null || cat.Id == categoryId)
+                        && sub.Status == StatusEnum.Authroized
+                        && cat.Status == StatusEnum.Authroized
+                    orderby b.Name
+                    select new BrandResponse(
+                        b.Id,
+                        b.Name,
+                        b.Code
+                    );
+
+        return await query.ToListAsync(cancellationToken);
+
     }
 
     public async Task<Brand?> GetByCodeAsync(string code, CancellationToken cancellationToken = default)

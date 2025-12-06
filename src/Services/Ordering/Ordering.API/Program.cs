@@ -1,5 +1,4 @@
 using EventBus.Messages.Common;
-using EventBus.Messages.Events;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MassTransit;

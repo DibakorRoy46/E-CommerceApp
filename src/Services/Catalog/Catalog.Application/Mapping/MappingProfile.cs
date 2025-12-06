@@ -2,7 +2,9 @@
 using AutoMapper;
 using Catalog.Application.Commands;
 using Catalog.Application.DTOs;
+using Catalog.Application.Responses;
 using Catalog.Domain.Entities;
+using Catalog.Domain.Enums;
 
 namespace Catalog.Application.Mapping;
 
@@ -20,6 +22,10 @@ public class MappingProfile : Profile
         CreateMap<ProductDto, Product>();
         CreateMap<CreateProductCommand, Product>();
         CreateMap<Product, CreateProductCommand>();
+
+        CreateMap<ProductHierarchy, ProductHierarchyResponse>()
+                .ForCtorParam("LevelName", opt => opt.MapFrom(src => src.LevelId.ToString()))
+                 .ForCtorParam("ParentName",opt => opt.MapFrom(src => src.Parent != null ? src.Parent.Name : null));
 
     }
 }

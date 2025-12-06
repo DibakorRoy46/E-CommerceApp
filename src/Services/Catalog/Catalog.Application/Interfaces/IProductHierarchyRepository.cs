@@ -1,5 +1,6 @@
 ﻿
 
+using Catalog.Application.Responses;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Enums;
 
@@ -11,6 +12,7 @@ public interface IProductHierarchyRepository
     Task<ProductHierarchy?> GetByCodeAsync(string code, CancellationToken ct = default);
     Task<List<ProductHierarchy>> GetAllAsync(ProductHierarchyLevelEnum? levelId,int? parentId,StatusEnum status,
         CancellationToken cancellationToken);
+    Task<IReadOnlyList<ProductCategoryResponse>> GetProductCategoriesAsync(CancellationToken ct = default);
     Task<bool> AddAsync(ProductHierarchy entity );
     Task<bool> Update(ProductHierarchy entity);
     Task<bool> Remove(ProductHierarchy entity);

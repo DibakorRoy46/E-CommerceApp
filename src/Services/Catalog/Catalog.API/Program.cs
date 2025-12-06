@@ -9,9 +9,11 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Sinks.Elasticsearch;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configuration
@@ -73,6 +75,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add JWT auth
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = jwtSettings["Key"];
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        };
+    });
 
 var app = builder.Build();
 
@@ -82,6 +104,9 @@ app.UseMiddleware<ExceptionMiddleware>(); // global exception logging
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 // Run DB migrations on startup (optional, production be cautious)
 using (var scope = app.Services.CreateScope())
 {
