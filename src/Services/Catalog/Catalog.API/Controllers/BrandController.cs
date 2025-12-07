@@ -56,7 +56,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IReadOnlyList<BrandResponse>>> GetByCategoryId([FromRoute] int categoryId)
+    public async Task<ActionResult<IReadOnlyList<BrandResponse>>> GetByCategoryId([FromRoute] int? categoryId)
     {
         var query = new GetBrandsByCategoryQuery(categoryId);
         var dtos = await _mediator.Send(query);

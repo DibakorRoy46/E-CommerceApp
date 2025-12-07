@@ -26,5 +26,5 @@ public class ProductSpecParams
         init => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
     }
 
-    private ProductSpecParams() { }
+    public ProductSpecParams() { }
 }
