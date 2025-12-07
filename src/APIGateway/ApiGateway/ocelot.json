@@ -106,6 +106,21 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/Brand/by-category/{categoryId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Brand/by-category/{categoryId}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/Brand",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -178,21 +193,6 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/Brand/by-category/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Brand/by-category/{id}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
       "DownstreamPathTemplate": "/api/Brand/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -211,7 +211,7 @@
       }
     },
     {
-      "DownstreamPathTemplate": "/api/v1/Catalog/{id}",
+      "DownstreamPathTemplate": "/api/Product",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -219,102 +219,16 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Catalog/{id}",
-      "UpstreamHttpMethod": [ "GET", "DELETE" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog/productName/{productName}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog/productName/{productName}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog",
+      "UpstreamPathTemplate": "/Product",
       "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "AddHeadersToRequest": {
         "x-correlation-id": "{X-Correlation-Id}"
       }
     },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog/{id}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog/{id}",
-      "UpstreamHttpMethod": [ "PUT" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog/GetAllBrands",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog/GetAllBrands",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog/GetAllTypes",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog/GetAllTypes",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
-    {
-      "DownstreamPathTemplate": "/api/v1/Catalog/brand/{brand}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 8000
-        }
-      ],
-      "UpstreamPathTemplate": "/Catalog/brand/{brand}",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AddHeadersToRequest": {
-        "x-correlation-id": "{X-Correlation-Id}"
-      }
-    },
+
     {
       "DownstreamPathTemplate": "/api/v1/Basket/{userName}",
       "DownstreamScheme": "https",

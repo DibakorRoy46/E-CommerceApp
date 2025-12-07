@@ -22,6 +22,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetAll([FromQuery] BrandRequest request)
     {
         var query= new GetBrandsQuery(request.Status);
@@ -33,6 +34,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
         var query = new GetBrandByIdQuery(id);
@@ -44,6 +46,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetByCode([FromRoute] string code)
     {
         var query = new GetBrandByCodeQuery(code);
@@ -56,7 +59,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IReadOnlyList<BrandResponse>>> GetByCategoryId([FromRoute] int? categoryId)
+    public async Task<ActionResult<IReadOnlyList<BrandResponse>>> GetByCategoryId([FromRoute] int categoryId)
     {
         var query = new GetBrandsByCategoryQuery(categoryId);
         var dtos = await _mediator.Send(query);
@@ -67,6 +70,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateBrandCommand command)
     {
         var id = await _mediator.Send(command);
@@ -77,6 +81,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBrandCommand command)
     {
         if (id != command.Id) return BadRequest("Id mismatch");
@@ -88,6 +93,7 @@ public class BrandController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Delete([FromRoute] int id, [FromBody] DeleteBrandCommand command)
     {
         await _mediator.Send(command);
