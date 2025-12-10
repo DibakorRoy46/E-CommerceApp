@@ -1,4 +1,5 @@
 
+using ApiGateway.Middleware;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -67,6 +68,7 @@ app.UseRouting();
 // CORS must come before Ocelot
 app.UseCors("AllowFrontend");
 
+app.UseMiddleware<CorrelationIdMiddleware>();
 //app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

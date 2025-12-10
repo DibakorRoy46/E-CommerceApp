@@ -29,7 +29,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         var createdOrder = await _repo.AddOrderAsync(orderEntity);      
         await _repo.SaveChangesAsync(cancellationToken);
 
-        var outboxMessage = OrderMapping.MapOutboMessage(createdOrder);
+        var outboxMessage = OrderMapping.MapOutboMessage(createdOrder,request.CorrelationId);
         await _repo.SaveOutboxMessageAsync(outboxMessage);
         await _repo.SaveChangesAsync(cancellationToken);
 

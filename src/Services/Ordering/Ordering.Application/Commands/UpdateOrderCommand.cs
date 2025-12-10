@@ -20,4 +20,5 @@ public sealed record UpdateOrderCommand(
     PaymentMethodEnum PaymentMethod,
     OrderStatusEnum Status,
     string Remarks,
-    List<OrderItemDto> OrderItems ) : IRequest<OrderDto>;
+    List<OrderItemDto> OrderItems,
+    Guid CorrelationId ) : IRequest<OrderDto>;

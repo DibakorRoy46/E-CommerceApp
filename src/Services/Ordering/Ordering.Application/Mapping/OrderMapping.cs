@@ -7,11 +7,11 @@ namespace Ordering.Application.Mapping;
 
 public static class OrderMapping
 {
-    public static OutboxMessage MapOutboMessage( Order order)
+    public static OutboxMessage MapOutboMessage( Order order,Guid correlationId)
     {
         return new OutboxMessage
         {
-            CorrelationId = Guid.NewGuid().ToString(),
+            CorrelationId = correlationId,
             Type = OrderConstraints.OrderCreated,
             Content = JsonSerializer.Serialize(order),
             OccurredOn = DateTime.UtcNow
