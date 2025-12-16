@@ -12,8 +12,7 @@ public class NotificationMongoContext
 
     public NotificationMongoContext(IConfiguration configuration)
     {
-        var client = new MongoClient(
-            configuration.GetConnectionString("MongoDb"));
+        var client = new MongoClient(configuration.GetConnectionString("MongoDb"));
 
         _database = client.GetDatabase("NotificationDb");
     }

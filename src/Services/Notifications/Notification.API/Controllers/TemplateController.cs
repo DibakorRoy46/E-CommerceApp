@@ -1,42 +1,51 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Notification.Application.Interfaces;
+using Notification.API.Requests;
+using Notification.Application.Commands;
+using Notification.Application.Queries;
 
 namespace Notification.API.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
-public class TemplateController : ControllerBase
+[Route("api/templates")]
+public class TemplatesController : ControllerBase
 {
-    private readonly ITemplateRepository _templateService;
+    private readonly IMediator _mediator;
 
-
-    public TemplateController(ITemplateRepository templateService)
+    public TemplatesController(IMediator mediator)
     {
-        _templateService = templateService;
+        _mediator = mediator;
     }
 
-
-    //[HttpGet]
-    //public async Task<IActionResult> GetAll()
-    //{
-    //    var templates = await _templateService.GetAllAsync();
-    //    return Ok(templates);
-    //}
-
-
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(string id)
+    [HttpPost]
+    public async Task<IActionResult> Create(CreateTemplateCommand command)
     {
-        var template = await _templateService.GetByIdAsync(id);
-        if (template == null) return NotFound();
-        return Ok(template);
+        var id = await _mediator.Send(command);
+
+        return CreatedAtAction(nameof(GetAll), new { id }, null);
     }
 
-    //[HttpPost]
-    //public async Task<IActionResult> Create([FromBody] CreateTemplateRequest request)
-    //{
-    //    var id = await _templateService.CreateAsync(request.Name, request.Content, request.Locale);
-    //    return CreatedAtAction(nameof(Get), new { id }, new { id });
-    //}
+    [HttpGet]
+    public async Task<IActionResult> GetAll([FromRoute] TempleteRequest request)
+    {
+        var result = await _mediator.Send(new GetAllTempletesQuery(request.Type, request.channel, request.IsActive));
+
+        return Ok(result);
+    }
+
+    [HttpPut("{code:string}/activate")]
+    public async Task<IActionResult> Activate(string code)
+    {
+        await _mediator.Send(new ActivatedTemplateCommand(code));
+
+        return NoContent();
+    }
+
+    [HttpPut("{code:string}/deactivate")]
+    public async Task<IActionResult> Deactivate(string code)
+    {
+        await _mediator.Send(new DeActivatedTemplateCommand(code));
+
+        return NoContent();
+    }
 }
