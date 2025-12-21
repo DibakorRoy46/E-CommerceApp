@@ -88,6 +88,24 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/ProductHierarchy/BulkInsert",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/ProductHierarchy/BulkInsert",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/ProductHierarchy/{id}",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -114,7 +132,7 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand/by-category/{categoryId}",
+      "UpstreamPathTemplate": "/Product/Brand/by-category/{categoryId}",
       "UpstreamHttpMethod": [ "GET" ],
       "AddHeadersToRequest": {
         "x-correlation-id": "{X-Correlation-Id}"
@@ -129,7 +147,25 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand",
+      "UpstreamPathTemplate": "/Product/Brand",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Brand/BulkInsert",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/Brand/BulkInsert",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -147,7 +183,7 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand",
+      "UpstreamPathTemplate": "/Product/Brand",
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -165,7 +201,7 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand/{id}",
+      "UpstreamPathTemplate": "/Product/Brand/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -183,7 +219,7 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand/by-code/{id}",
+      "UpstreamPathTemplate": "/Product/Brand/by-code/{id}",
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -201,11 +237,26 @@
           "Port": 8000
         }
       ],
-      "UpstreamPathTemplate": "/Brand/{id}",
+      "UpstreamPathTemplate": "/Product/Brand/{id}",
       "UpstreamHttpMethod": [ "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Product/search",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/Search",
+      "UpstreamHttpMethod": [ "GET" ],
       "AddHeadersToRequest": {
         "x-correlation-id": "{X-Correlation-Id}"
       }
@@ -220,6 +271,24 @@
         }
       ],
       "UpstreamPathTemplate": "/Product",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Product/BulkInsert",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/BulkInsert",
       "UpstreamHttpMethod": [ "POST" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
@@ -275,6 +344,114 @@
       ],
       "UpstreamPathTemplate": "/Product/by-code/{code}",
       "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Product/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8000
+        }
+      ],
+      "UpstreamPathTemplate": "/Product/{id}",
+      "UpstreamHttpMethod": [ "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Discount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8007
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Discount/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8007
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount/{id}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Discount/by-code/{code}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8007
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount/by-code/{code}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Discount",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8007
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "AddHeadersToRequest": {
+        "x-correlation-id": "{X-Correlation-Id}"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/Discount/{id}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 8007
+        }
+      ],
+      "UpstreamPathTemplate": "/Discount/{id}",
+      "UpstreamHttpMethod": [ "PUT", "DELETE" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       },

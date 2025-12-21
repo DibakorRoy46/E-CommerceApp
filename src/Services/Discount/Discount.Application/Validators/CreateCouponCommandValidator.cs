@@ -28,6 +28,14 @@ public class CreateCouponCommandValidator : AbstractValidator<CreateCouponComman
             .NotEmpty().WithMessage("Description is required")
             .GreaterThan(0).WithMessage("Amount will be greater than zero");
 
+        RuleFor(x => x.StartDate)
+            .NotEmpty().WithMessage("StartDate is required")
+            .LessThanOrEqualTo(x => x.EndDate).WithMessage("StartDate must be earlier than EndDate");
+
+        RuleFor(x => x.EndDate)
+            .NotEmpty().WithMessage("EndDate is required")
+            .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("EndDate must be later than StartDate");
+
         RuleFor(x=>x.IsActive)
             .InclusiveBetween(0, 1)
             .WithMessage("IsActive must be either 0 (inactive) or 1 (active).");

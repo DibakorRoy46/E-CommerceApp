@@ -5,6 +5,7 @@ using Notification.Instrastructure.Mongo;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Controllers
 builder.Host.UseSharedSerilog();
 builder.Services.AddControllers();

@@ -23,10 +23,17 @@ public class ProductHierarchyRepository : IProductHierarchyRepository
     {
         return await _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().FirstOrDefaultAsync(x=>x.Id == id);
     }
+
     public async Task<ProductHierarchy?> GetByCodeAsync(string code, CancellationToken ct = default)
     {
         return await _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().FirstOrDefaultAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
     }
+
+    public async Task<bool> IsCodeExistAsync(string code, CancellationToken ct = default)
+    {
+        return await _db.ProductHierarchies.AsNoTracking().AnyAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
+    }
+
     public async Task<List<ProductHierarchy>> GetAllAsync(ProductHierarchyLevelEnum? levelId,int? parentId,StatusEnum status,CancellationToken cancellationToken)
     {
         var query = _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().AsQueryable();

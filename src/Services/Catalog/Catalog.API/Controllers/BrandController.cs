@@ -2,10 +2,8 @@
 using Catalog.Application.Queries;
 using Catalog.Application.Requests;
 using Catalog.Application.Responses;
-using Catalog.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.API.Controllers;
@@ -68,13 +66,25 @@ public class BrandController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Create([FromBody] CreateBrandCommand command)
     {
         var id = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id }, null);
+    }
+
+    [HttpPost("BulkInsert")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> BulkInsert([FromBody] List<CreateBrandCommand> command)
+    {
+        foreach (var item in command)
+        {
+            await _mediator.Send(item);
+        }
+        return NoContent();
     }
 
     [HttpPut("{id}")]

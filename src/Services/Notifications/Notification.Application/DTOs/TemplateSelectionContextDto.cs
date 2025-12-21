@@ -4,7 +4,7 @@ namespace Notification.Application.DTOs;
 
 public sealed record TemplateSelectionContextDto
 (
-    Guid UserId,
+    string UserId,
     decimal Amount,
     NotificationTypeEnum Type
 );

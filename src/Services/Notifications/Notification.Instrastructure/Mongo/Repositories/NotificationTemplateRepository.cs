@@ -47,6 +47,7 @@ public class NotificationTemplateRepository : INotificationTemplateRepository
             ContentTemplate = template.ContentTemplate,
             IsActive = template.IsActive,
             Priority = template.Priority
+            
         };
     }
 

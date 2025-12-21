@@ -75,6 +75,19 @@ namespace Catalog.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id }, null);
         }
 
+        [HttpPost("BulkInsert")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> BulkInsert([FromBody] List<CreateProductCommand> command)
+        {
+            foreach (var cmd in command)
+            {
+                await _mediator.Send(cmd);
+            }
+            return Created();
+        }
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

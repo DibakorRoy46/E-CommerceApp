@@ -15,8 +15,8 @@ public class NotificationController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("user/{userId:guid}")]
-    public async Task<IActionResult> GetUserNotifications(Guid userId,CancellationToken cancellationToken)
+    [HttpGet("user/{userId}")]
+    public async Task<IActionResult> GetUserNotifications(string userId,CancellationToken cancellationToken)
     {
         var query = new GetUserNotificationsQuery(userId);
 

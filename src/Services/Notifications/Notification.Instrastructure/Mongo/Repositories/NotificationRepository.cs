@@ -41,7 +41,7 @@ public class NotificationRepository : INotificationRepository
         return documents.Select(MapToDomain).ToList();
     }
 
-    public async Task<IReadOnlyList<Notifier>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Notifier>> GetByUserIdAsync(string userId, CancellationToken cancellationToken)
     {
         var documents = await _collection.Find(n => n.UserId == userId )
             .ToListAsync(cancellationToken);

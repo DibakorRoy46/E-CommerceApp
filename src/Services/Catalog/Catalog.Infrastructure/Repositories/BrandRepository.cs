@@ -57,6 +57,11 @@ public class BrandRepository : IBrandRepository
         return await _db.Brands.AsNoTracking().Include(x=>x.ProductHierarchy).FirstOrDefaultAsync(x => x.Code.ToLower() == code.ToLower(), cancellationToken);
     }
 
+    public async Task<bool> IsCodeExistAsync(string code, CancellationToken cancellationToken = default)
+    {
+        return await _db.Brands.AsNoTracking().AnyAsync(x => x.Code.ToLower() == code.ToLower(), cancellationToken);
+    }
+
     public async Task<Brand?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
         return await _db.Brands.AsNoTracking().Include(x => x.ProductHierarchy).FirstOrDefaultAsync(x=> x.Id == id, cancellationToken);   

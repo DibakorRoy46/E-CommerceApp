@@ -9,6 +9,7 @@ public interface IBrandRepository
 {
     Task<List<Brand>> GetAllAsync(StatusEnum? status,CancellationToken cancellationToken=default);
     Task<Brand?> GetByIdAsync(int id, CancellationToken cancellationToken=default);
+    Task<bool> IsCodeExistAsync(string code, CancellationToken cancellationToken=default);
     Task<Brand?> GetByCodeAsync(string code, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<BrandResponse>> GetBrandsByCategoryAsync(int? categoryId, CancellationToken cancellationToken = default);
     Task<bool> AddAsync(Brand brand);

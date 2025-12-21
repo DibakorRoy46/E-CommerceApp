@@ -33,7 +33,7 @@ public class TemplatesController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPut("{code:string}/activate")]
+    [HttpPut("{code}/activate")]
     public async Task<IActionResult> Activate(string code)
     {
         await _mediator.Send(new ActivatedTemplateCommand(code));
@@ -41,7 +41,7 @@ public class TemplatesController : ControllerBase
         return NoContent();
     }
 
-    [HttpPut("{code:string}/deactivate")]
+    [HttpPut("{code}/deactivate")]
     public async Task<IActionResult> Deactivate(string code)
     {
         await _mediator.Send(new DeActivatedTemplateCommand(code));

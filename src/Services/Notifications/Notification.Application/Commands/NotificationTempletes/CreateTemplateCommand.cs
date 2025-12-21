@@ -10,4 +10,6 @@ public record CreateTemplateCommand(
     NotificationChannelEnum Channel,
     string TitleTemplate,
     string ContentTemplate,
-    int Priority) : IRequest<Guid>;
+    int Priority,
+    bool IsActive
+    ) : IRequest<Guid>;

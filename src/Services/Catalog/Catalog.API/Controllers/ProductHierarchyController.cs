@@ -65,6 +65,19 @@ public class ProductHierarchyController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id }, null);
     }
 
+    [HttpPost("BulkInsert")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+    public async Task<IActionResult> CreateBulk([FromBody] List<CreateProductHierarchyCommand> command)
+    {
+        foreach (var item in command)
+        {
+            await _mediator.Send(item);
+        }
+        return NoContent();
+    }
+
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

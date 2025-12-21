@@ -1,5 +1,6 @@
 ﻿
 
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Notification.Domain.Enums;
 
@@ -8,10 +9,12 @@ namespace Notification.Instrastructure.Mongo.Collections;
 public class NotificationDocument
 {
     [BsonId]
-    public Guid Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } 
 
-    public Guid UserId { get; set; }
-    public Guid OrderId { get; set; }
+    public string UserId { get; set; }
+
+    public int OrderId { get; set; }
 
     public NotificationTypeEnum Type { get; set; }
     public NotificationChannelEnum Channel { get; set; }

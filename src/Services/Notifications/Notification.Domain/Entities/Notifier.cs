@@ -5,9 +5,9 @@ namespace Notification.Domain.Entities;
 
 public sealed class Notifier
 {
-    public Guid Id { get; private set; }
-    public Guid UserId { get; private set; }
-    public Guid OrderId { get; private set; }
+    public string Id { get; private set; }
+    public string UserId { get; private set; }
+    public int OrderId { get; private set; }
     public NotificationTypeEnum Type { get; private set; }
     public NotificationChannelEnum Channel { get; private set; }
     public string Title { get; private set; }
@@ -20,10 +20,10 @@ public sealed class Notifier
 
     private Notifier() { } // For ORM / Mongo
 
-    public Notifier(Guid userId,Guid orderId,NotificationTypeEnum type,NotificationChannelEnum channel,
+    public Notifier(string userId,int orderId,NotificationTypeEnum type,NotificationChannelEnum channel,
         string title,string content)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.NewGuid().ToString();
         UserId = userId;
         OrderId = orderId;
         Type = type;
@@ -34,10 +34,10 @@ public sealed class Notifier
         CreatedAt = DateTime.UtcNow;
     }
 
-    public Notifier(Guid userId, Guid orderId, NotificationTypeEnum type, NotificationChannelEnum channel,
+    public Notifier(string userId, int orderId, NotificationTypeEnum type, NotificationChannelEnum channel,
        string title, string content,NotificationStatusEnum status, int retryCount, DateTime? nextRetryAt)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.NewGuid().ToString();
         UserId = userId;
         OrderId = orderId;
         Type = type;

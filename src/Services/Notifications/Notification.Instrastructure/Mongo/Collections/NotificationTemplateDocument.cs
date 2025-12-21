@@ -1,4 +1,5 @@
 ﻿
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Notification.Domain.Enums;
 
@@ -7,7 +8,8 @@ namespace Notification.Instrastructure.Mongo.Collections;
 public class NotificationTemplateDocument
 {
     [BsonId]
-    public Guid Id { get; set; }
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string Id { get; set; } 
 
     public string TemplateCode { get; set; } = default!;
     public NotificationTypeEnum Type { get; set; }

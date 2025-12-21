@@ -5,8 +5,10 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
+      "launchBrowser": true,
+      "launchUrl": "swagger",
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:8002"
+      "applicationUrl": "http://localhost:8002;https://localhost:8007"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

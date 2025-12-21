@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Notification.Application.Interfaces.Repositories;
@@ -8,16 +9,13 @@ namespace Notification.Instrastructure.BackgroundJobs;
 
 public class NotificationOutboxService : BackgroundService
 {
-    private readonly INotificationRepository _notificationRepository;
-    private readonly INotificationSenderFactory _senderFactory;
+    private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<NotificationOutboxService> _logger;
     private readonly TimeSpan _interval = TimeSpan.FromSeconds(10);
 
-    public NotificationOutboxService(INotificationRepository notificationRepository,INotificationSenderFactory senderFactory,
-        ILogger<NotificationOutboxService> logger)
+    public NotificationOutboxService( IServiceProvider serviceProvider, ILogger<NotificationOutboxService> logger)
     {
-        _notificationRepository = notificationRepository;
-        _senderFactory = senderFactory;
+        _serviceProvider = serviceProvider;
         _logger = logger;
     }
 
@@ -29,13 +27,17 @@ public class NotificationOutboxService : BackgroundService
         {
             try
             {
-                var pendingNotifications = await _notificationRepository.GetPendingNotificationsAsync(stoppingToken);
+                using var scope = _serviceProvider.CreateScope();
+                var notificationRepository = scope.ServiceProvider.GetRequiredService<INotificationRepository>();
+                var senderFactory = scope.ServiceProvider.GetRequiredService<INotificationSenderFactory>();
+
+                var pendingNotifications = await notificationRepository.GetPendingNotificationsAsync(stoppingToken);
 
                 foreach (var notification in pendingNotifications)
                 {
                     try
                     {
-                        var sender = _senderFactory.Create(notification.Channel);
+                        var sender = senderFactory.Create(notification.Channel);
                         var success = await sender.SendAsync(notification, stoppingToken);
 
                         if (success)
@@ -47,13 +49,13 @@ public class NotificationOutboxService : BackgroundService
                             notification.MarkAsFailed(retryDelaySeconds: 60);
                         }
 
-                        await _notificationRepository.UpdateAsync(notification, stoppingToken);
+                        await notificationRepository.UpdateAsync(notification, stoppingToken);
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Error sending notification {NotificationId}", notification.Id);
                         notification.MarkAsFailed(retryDelaySeconds: 60);
-                        await _notificationRepository.UpdateAsync(notification, stoppingToken);
+                        await notificationRepository.UpdateAsync(notification, stoppingToken);
                     }
                 }
             }
