@@ -1,10 +1,10 @@
-﻿
-using EventBus.Messages.Events;
+﻿using EventBus.Messages.Events;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Ordering.Application.Constraints;
 using Ordering.Insfrastrueture.Presistence;
 using System.Text.Json;
 
@@ -30,7 +30,7 @@ public class OutboxMessageDispatcher : BackgroundService
             var publishEndPoint = scope.ServiceProvider.GetRequiredService<IPublishEndpoint>();
 
             var pendingMessages = await dbContext.OutboxMessages
-                .Where(x=>x.ProcessedOn == null)
+                .Where(x=>x.Type == OrderConstraints.OrderCreated && x.ProcessedOn == null)
                 .OrderBy(x=>x.OccurredOn)
                 .Take(20)
                 .ToListAsync(stoppingToken);

@@ -3,6 +3,8 @@ using Common.Logging.Extensions;
 using EventBus.Messages.Common;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.SqlServer;
 using Logging.Abstractions;
 using MassTransit;
 using MediatR;
@@ -48,6 +50,7 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavi
 
 // Repositories
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -86,12 +89,31 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
-
+//Register Hangfire
+builder.Services.AddHangfire(config =>
+{
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.FromSeconds(15),
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        });
+});
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<OutboxOrderCreatedNotificationDispatcher>();
 
 var app = builder.Build();
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<OutboxOrderCreatedNotificationDispatcher>(
+    "outbox-ordercreated-publisher",job => job.ExecuteAsync(),Cron.Minutely); 
 
 // Middleware
-app.UseSerilogRequestLogging(); // logs all HTTP requests
+app.UseSerilogRequestLogging();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();

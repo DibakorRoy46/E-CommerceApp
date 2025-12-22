@@ -14,4 +14,8 @@ public class OutboxMessage : BaseEntity
     [NotMapped]
     public bool? IsProcessed => ProcessedOn.HasValue;
     public string? Error { get; set; }
+
+    //Poison handling
+    public int RetryCount { get; set; }
+    public DateTime? PoisonedOn { get; set; }
 }
