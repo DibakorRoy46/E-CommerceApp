@@ -23,6 +23,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Insfrastructure\EventBus.Messages\EventBus.Messages.csproj" />
+		<ProjectReference Include="..\..\..\Insfrastructure\Logging.Abstractions\Logging.Abstractions.csproj" />
 		<ProjectReference Include="..\Basket.Domain\Basket.Domain.csproj" />
 	</ItemGroup>
 

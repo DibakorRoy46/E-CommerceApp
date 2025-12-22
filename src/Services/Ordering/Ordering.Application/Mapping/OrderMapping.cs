@@ -17,4 +17,15 @@ public static class OrderMapping
             OccurredOn = DateTime.UtcNow
         };
     }
+
+    public static OutboxMessage MapNotificationOutboxMessage(Order order, Guid correlationId)
+    {
+        return new OutboxMessage
+        {
+            CorrelationId = correlationId,
+            Type = OrderConstraints.OrderCreatedNotification,
+            Content = JsonSerializer.Serialize(order),
+            OccurredOn = DateTime.UtcNow
+        };
+    }
 }

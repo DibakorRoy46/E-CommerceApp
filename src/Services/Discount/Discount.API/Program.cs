@@ -21,7 +21,7 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenLocalhost(8002, o =>
     {
-        o.Protocols = HttpProtocols.Http1AndHttp2;
+        o.Protocols = HttpProtocols.Http2;
     });
 
     // REST + Swagger
