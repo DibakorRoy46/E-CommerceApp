@@ -28,26 +28,21 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDiscount);
         }
-       
-        await _unitOfWork.BeginTransactionAsync(cancellationToken);
-        try
+
+        await _unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
             var createdOrder = await _repo.AddOrderAsync(orderEntity);
-            await _repo.SaveChangesAsync(cancellationToken);
+            await _repo.SaveChangesAsync(ct);
 
             var outboxMessage = OrderMapping.MapOutboMessage(createdOrder, request.CorrelationId);
             var outboxNotificationMessage = OrderMapping.MapNotificationOutboxMessage(createdOrder, request.CorrelationId);
             await _repo.SaveOutboxMessageAsync(outboxMessage);
             await _repo.SaveOutboxMessageAsync(outboxNotificationMessage);
-            await _repo.SaveChangesAsync(cancellationToken);
 
-            await _unitOfWork.CommitTransactionAsync(cancellationToken);
-            return _mapper.Map<OrderDto>(createdOrder);
-        }
-        catch(Exception ex)
-        {
-            await _unitOfWork.RollbackTransactionAsync(cancellationToken);
-            throw;
-        }
+            await _repo.SaveChangesAsync(ct);
+
+        }, cancellationToken);
+
+        return _mapper.Map<OrderDto>(orderEntity);
     }
 }
