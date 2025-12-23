@@ -110,7 +110,7 @@ var app = builder.Build();
 app.UseHangfireDashboard("/hangfire");
 
 RecurringJob.AddOrUpdate<OutboxOrderCreatedNotificationDispatcher>(
-    "outbox-ordercreated-publisher",job => job.ExecuteAsync(),Cron.Minutely); 
+    "outbox-ordercreated-publisher",job => job.ExecuteAsync(CancellationToken.None),Cron.Minutely); 
 
 // Middleware
 app.UseSerilogRequestLogging();

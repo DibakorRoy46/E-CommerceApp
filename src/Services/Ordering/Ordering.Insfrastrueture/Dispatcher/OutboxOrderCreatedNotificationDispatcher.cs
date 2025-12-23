@@ -18,7 +18,7 @@ public class OutboxOrderCreatedNotificationDispatcher
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<OutboxOrderCreatedNotificationDispatcher> _logger;
 
-    public OutboxOrderCreatedNotificationDispatcher(AppDbContext dbContext,IPublishEndpoint publishEndpoint,
+    public OutboxOrderCreatedNotificationDispatcher(AppDbContext dbContext, IPublishEndpoint publishEndpoint,
         ILogger<OutboxOrderCreatedNotificationDispatcher> logger)
     {
         _dbContext = dbContext;
@@ -26,90 +26,100 @@ public class OutboxOrderCreatedNotificationDispatcher
         _logger = logger;
     }
 
+    [DisableConcurrentExecution(600)]
     [AutomaticRetry(Attempts = 5, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
-    public async Task ExecuteAsync(CancellationToken cancellationToken=default)
+    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
-        var messages = await _dbContext.OutboxMessages
-            .FromSqlRaw("""
+        var strategy = _dbContext.Database.CreateExecutionStrategy();
+
+        await strategy.ExecuteAsync(async () =>
+        {
+            using var tx = await _dbContext.Database.BeginTransactionAsync();
+
+            var messages = await _dbContext.OutboxMessages
+                .FromSqlRaw("""
                 SELECT TOP (1000) *
                 FROM OutboxMessages WITH (UPDLOCK, READPAST)
                 WHERE Type = @type
                   AND ProcessedOn IS NULL
                   AND PoisonedOn IS NULL
                 ORDER BY OccurredOn
-            """, new SqlParameter("@type", OrderConstraints.OrderCreatedNotification))
-            .AsTracking()
-            .ToListAsync();
+                """, new SqlParameter("@type", OrderConstraints.OrderCreatedNotification))
+                .AsTracking()
+                .ToListAsync();
 
-        var batchEvent = new OrderCreatedMessageEventBatch
-        {
-            BatchId = Guid.NewGuid(),
-            CreatedAt = DateTime.UtcNow,
-            BatchItems = new List<OrderCreatedMessageEvent>()
-        };
+            var batchEvent = new OrderCreatedMessageEventBatch
+            {
+                BatchId = Guid.NewGuid(),
+                CreatedAt = DateTime.UtcNow,
+                BatchItems = new List<OrderCreatedMessageEvent>()
+            };
 
-        foreach (var message in messages)
-        {
+            foreach (var message in messages)
+            {
+                try
+                {
+                    var payload =
+                        JsonSerializer.Deserialize<OrderCreatedMessageEvent>(message.Content);
+
+                    if (payload == null)
+                        throw new InvalidOperationException("Invalid content");
+
+                    batchEvent.BatchItems.Add(payload);
+                }
+                catch (Exception ex)
+                {
+                    message.RetryCount++;
+                    message.Error = ex.Message;
+
+                    if (message.RetryCount >= MaxRetryCount)
+                    {
+                        message.PoisonedOn = DateTime.UtcNow;
+                        _logger.LogCritical("POISON (serialization) OutboxId={Id}", message.Id);
+                    }
+                }
+            }
+
+            // ❗ Nothing valid to publish
+            if (batchEvent.BatchItems.Count == 0)
+            {
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await tx.CommitAsync();
+                return;
+            }
+
             try
             {
-                var payload =
-                    JsonSerializer.Deserialize<OrderCreatedMessageEvent>(message.Content);
+                await _publishEndpoint.Publish(batchEvent);
 
-                if (payload == null)
-                    throw new InvalidOperationException("Invalid content");
-
-                batchEvent.BatchItems.Add(payload);
+                // ✅ Mark ALL included rows as processed
+                foreach (var item in batchEvent.BatchItems)
+                {
+                    var msg = messages.First(x => x.CorrelationId == item.CorrelationId);
+                    msg.ProcessedOn = DateTime.UtcNow;
+                    msg.Error = null;
+                }
             }
             catch (Exception ex)
             {
-                message.RetryCount++;
-                message.Error = ex.Message;
-
-                if (message.RetryCount >= MaxRetryCount)
+                // 🚨 Broker / network failure → retry ALL rows
+                foreach (var message in messages)
                 {
-                    message.PoisonedOn = DateTime.UtcNow;
-                    _logger.LogCritical( "POISON (serialization) OutboxId={Id}", message.Id);
+                    message.RetryCount++;
+                    message.Error = ex.Message;
+
+                    if (message.RetryCount >= MaxRetryCount)
+                    {
+                        message.PoisonedOn = DateTime.UtcNow;
+                        _logger.LogCritical("POISON (batch) OutboxId={Id} & CorrelationId= {1}", message.Id, message.CorrelationId);
+                    }
                 }
-            }
-        }
 
-        // ❗ Nothing valid to publish
-        if (batchEvent.BatchItems.Count == 0)
-        {
-            await _dbContext.SaveChangesAsync(cancellationToken);
-            return;
-        }
-
-        try
-        {
-            await _publishEndpoint.Publish(batchEvent);
-
-            // ✅ Mark ALL included rows as processed
-            foreach (var item in batchEvent.BatchItems)
-            {
-                var msg = messages.First(x => x.CorrelationId == item.CorrelationId);
-                msg.ProcessedOn = DateTime.UtcNow;
-                msg.Error = null;
-            }
-        }
-        catch (Exception ex)
-        {
-            // 🚨 Broker / network failure → retry ALL rows
-            foreach (var message in messages)
-            {
-                message.RetryCount++;
-                message.Error = ex.Message;
-
-                if (message.RetryCount >= MaxRetryCount)
-                {
-                    message.PoisonedOn = DateTime.UtcNow;
-                    _logger.LogCritical("POISON (batch) OutboxId={Id} & CorrelationId= {1}", message.Id, message.CorrelationId);
-                }
+                throw;
             }
 
-            throw;
-        }
-
-        await _dbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
+            await tx.CommitAsync();
+        });
     }
 }
