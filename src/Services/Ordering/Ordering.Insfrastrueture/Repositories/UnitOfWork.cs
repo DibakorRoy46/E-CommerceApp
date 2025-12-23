@@ -48,9 +48,8 @@ public class UnitOfWork : IUnitOfWork
                 await action(cancellationToken);
                 await transaction.CommitAsync(cancellationToken);
             }
-            catch
+            catch(Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
         });
