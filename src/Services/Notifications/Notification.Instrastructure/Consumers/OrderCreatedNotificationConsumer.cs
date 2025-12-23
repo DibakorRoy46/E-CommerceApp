@@ -1,12 +1,18 @@
 ﻿using EventBus.Messages.Events;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace Notification.Instrastructure.Consumers;
 
-internal class OrderCreatedNotificationConsumer : IConsumer<OrderCreatedEvent>
+public class OrderCreatedNotificationConsumer : IConsumer<OrderCreatedMessageEventBatch>
 {
+    private readonly ILogger<OrderCreatedNotificationConsumer> _logger;
 
-    public Task Consume(ConsumeContext<OrderCreatedEvent> context)
+    public OrderCreatedNotificationConsumer(ILogger<OrderCreatedNotificationConsumer> logger)
+    {
+        _logger = logger;
+    }
+    public Task Consume(ConsumeContext<OrderCreatedMessageEventBatch> context)
     {
         throw new NotImplementedException();
     }

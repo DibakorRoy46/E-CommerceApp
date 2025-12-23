@@ -11,7 +11,7 @@ using Notification.Domain.ValueObjects;
 
 namespace Notification.Application.Handlers;
 
-public class CreatePaymentNotificationCommandHandler : IRequestHandler<CreatePaymentNotificationCommand>
+public class CreateNotificationCommandHandler : IRequestHandler<CreatePaymentNotificationCommand>
 {
     private readonly INotificationTemplateRepository _templateRepository;
     private readonly INotificationRepository _notificationRepository;
@@ -19,7 +19,7 @@ public class CreatePaymentNotificationCommandHandler : IRequestHandler<CreatePay
     private readonly ITemplateRenderer _templateRenderer;
     private readonly INotificationSenderFactory _senderFactory;
 
-    public CreatePaymentNotificationCommandHandler(
+    public CreateNotificationCommandHandler(
         INotificationTemplateRepository templateRepository,
         INotificationRepository notificationRepository,
         ITemplateSelectionService templateSelectionService,
@@ -41,8 +41,7 @@ public class CreatePaymentNotificationCommandHandler : IRequestHandler<CreatePay
         if (!templates.Any())
             throw new DomainException("No Existing Templete Founds");
 
-        var context = new TemplateSelectionContextDto( command.UserId, command.Amount,
-                                              NotificationTypeEnum.PaymentSuccessful);
+        var context = new TemplateSelectionContextDto( command.UserId, command.Amount, command.NotificationType);
 
         var selectedTemplates = _templateSelectionService.SelectTemplates(templates, context);
 
@@ -72,12 +71,7 @@ public class CreatePaymentNotificationCommandHandler : IRequestHandler<CreatePay
 
         // Create domain entity
         var notification = new Notifier(
-            command.UserId,
-            command.OrderId,
-            NotificationTypeEnum.PaymentSuccessful,
-            template.Channel,
-            title,
-            content
+            command.UserId,command.OrderId,command.NotificationType,template.Channel,title,content
         );
 
         // Persist snapshot

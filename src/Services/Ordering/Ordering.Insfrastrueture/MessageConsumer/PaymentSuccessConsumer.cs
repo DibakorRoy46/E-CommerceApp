@@ -10,12 +10,15 @@ namespace Ordering.Insfrastrueture.MessageConsumer;
 public class PaymentSuccessConsumer : IConsumer<PayementSuccessEvent>
 {
     private readonly IOrderRepository _repo;
+    private readonly IUnitOfWork _unitofWork;
     private readonly ILogger<PaymentSuccessConsumer> _logger;
 
-    public PaymentSuccessConsumer(IOrderRepository repo, ILogger<PaymentSuccessConsumer> logger)
+    public PaymentSuccessConsumer(IOrderRepository repo, ILogger<PaymentSuccessConsumer> logger,
+        IUnitOfWork unitofWork)
     {
         _repo = repo;
         _logger = logger;
+        _unitofWork = unitofWork;
     }
     public async Task Consume(ConsumeContext<PayementSuccessEvent> context)
     {
@@ -30,8 +33,12 @@ public class PaymentSuccessConsumer : IConsumer<PayementSuccessEvent>
         }
 
         orderToUpdate.Update(orderToUpdate.OrderId, OrderStatusEnum.Paid, "Successfully Paid", message.UserName);
-        await _repo.UpdateOrderAsync(orderToUpdate);
-        await _repo.SaveChangesAsync();
+        await _unitofWork.ExecuteInTransactionAsync(async (ct) =>
+        {
+            await _repo.UpdateOrderAsync(orderToUpdate);
+            await _repo.SaveChangesAsync(ct);
+        },CancellationToken.None);
+
         _logger.LogInformation("OrderId: {OrderId}  and CorrelationId: {CorrelationId} status updated to 'Payment Paid'",
             message.OrderId, message.CorrelationId);
     }

@@ -59,9 +59,9 @@ public class OutboxOrderCreatedNotificationDispatcher
             {
                 try
                 {
-                    var payload =
-                        JsonSerializer.Deserialize<OrderCreatedMessageEvent>(message.Content);
-
+                    var payload = JsonSerializer.Deserialize<OrderCreatedMessageEvent>(message.Content)?? new OrderCreatedMessageEvent();
+                    
+                    payload.Id = message.Id;
                     if (payload == null)
                         throw new InvalidOperationException("Invalid content");
 
@@ -89,16 +89,15 @@ public class OutboxOrderCreatedNotificationDispatcher
             }
 
             try
-            {
-                await _publishEndpoint.Publish(batchEvent);
-
+            {             
                 // ✅ Mark ALL included rows as processed
                 foreach (var item in batchEvent.BatchItems)
                 {
-                    var msg = messages.First(x => x.CorrelationId == item.CorrelationId);
+                    var msg = messages.First(x => x.Id == item.Id);
                     msg.ProcessedOn = DateTime.UtcNow;
                     msg.Error = null;
                 }
+                await _publishEndpoint.Publish(batchEvent);
             }
             catch (Exception ex)
             {

@@ -1,6 +1,9 @@
 using Common.Logging.Extensions;
+using EventBus.Messages.Common;
+using MassTransit;
 using Notification.Application.Commands;
 using Notification.Instrastructure;
+using Notification.Instrastructure.Consumers;
 using Notification.Instrastructure.Mongo;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +25,23 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddNotificationInfrastructure(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//Add RabbitMQ MassTransit
+builder.Services.AddMassTransit(config =>
+{
+    config.AddConsumer<OrderCreatedNotificationConsumer>();
+
+    config.UsingRabbitMq((ctx, cfg) =>
+    {
+        cfg.Host(builder.Configuration["EventBusSettings:HostAddress"]);
+
+        cfg.ReceiveEndpoint(EventBusConstant.OrderCreatedMessageQueue, c =>
+        {
+            c.ConfigureConsumer<OrderCreatedNotificationConsumer>(ctx);
+        });
+    });
+});
+
 
 var app = builder.Build();
 
