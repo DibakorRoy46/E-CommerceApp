@@ -17,7 +17,7 @@ Key architectural principles:
 * **Synchronous (gRPC) + Asynchronous (RabbitMQ) communication**
 * **Outbox pattern for reliable messaging**
 * **Containerized deployment (Docker & Kubernetes)**
-* **Automated CI/CD with Azure DevOps / GitHub Actions**
+* **Automated CI/CD with GitHub Actions**
 
 ---
 
