@@ -1,5 +1,4 @@
 ﻿
-
 using Dapper;
 using Discount.Application.Interfaces;
 using Discount.Domain.Entities;
@@ -37,7 +36,7 @@ public class CouponRepository : ICouponRepository
         // Open the connection with cancellation support
         await connection.OpenAsync(cancellationToken);
 
-        var sql = @"SELECT Id, Name, Code, Description, Amount, IsActive,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
+        var sql = @"SELECT Id, Name, Code, Description, Amount, IsActive,StartDate,EndDate,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
                     FROM Coupons WHERE Code = @code;";
 
         var coupon = await connection.QueryFirstOrDefaultAsync<Coupon>(sql,new { code });
@@ -52,7 +51,7 @@ public class CouponRepository : ICouponRepository
         // Open the connection with cancellation support
         await connection.OpenAsync(cancellationToken);
 
-        var sql = @"SELECT Id, Name, Code, Description, Amount, IsActive,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
+        var sql = @"SELECT Id, Name, Code, Description, Amount, IsActive,StartDate,EndDate,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
                     FROM Coupons WHERE Id = @Id;";
 
         var coupon = await connection.QueryFirstOrDefaultAsync<Coupon>(sql, new { id });
@@ -66,7 +65,7 @@ public class CouponRepository : ICouponRepository
         // Open the connection with cancellation support
         await connection.OpenAsync(cancellationToken);
 
-        var sql = @"SELECT Id, Name, Code, Description, Amount, IsActive,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
+        var sql = @"SELECT Id, Name, Code, Description, Amount,StartDate,EndDate, IsActive,CreatedBy, CreatedDate, ModifiedBy, ModifiedDate
                     FROM Coupons WHERE (@IsActive IS NULL OR IsActive = @IsActive);";
 
         var coupons = await connection.QueryAsync<Coupon>(sql, new { isActive });
@@ -80,11 +79,11 @@ public class CouponRepository : ICouponRepository
         // Open the connection with cancellation support
         await connection.OpenAsync(cancellationToken);
 
-        var sql = @"INSERT INTO Coupons ( Name, Code, Description, Amount, IsActive,CreatedBy, CreatedDate )
-                    Values (@Name,@Code,@Description,@Amount,@IsActve,@CreatedBy,@CreatedDate);";
+        var sql = @"INSERT INTO Coupons ( Name, Code, Description, Amount,StartDate,EndDate, IsActive,CreatedBy, CreatedDate )
+                    Values (@Name,@Code,@Description,@Amount,@StartDate,@EndDate,@IsActive,@CreatedBy,@CreatedDate);";
 
-        await connection.ExecuteAsync(sql, new { coupon.Name, coupon.Code, coupon.Description, coupon.Amount, coupon.IsActive,
-                                                    coupon.CreatedBy,coupon.CreatedDate});
+        await connection.ExecuteAsync(sql, new { coupon.Name, coupon.Code, coupon.Description, coupon.Amount,coupon.StartDate,coupon.EndDate,
+                                            coupon.IsActive, coupon.CreatedBy,coupon.CreatedDate});
         return coupon;
     }
 
@@ -97,11 +96,13 @@ public class CouponRepository : ICouponRepository
         await connection.OpenAsync(cancellationToken);
 
         var sql = @"UPDATE Coupons SET Name=@Name, Code=@Code, Description=@Description, Amount=@Amount, IsActive=@IsActive,
+                    StartDate=@StartDate, EndDate=@EndDate,
                     ModifiedBy=@ModifiedBy,ModifiedDate=@ModifiedDate WHERE Id=@Id ;";
 
         await connection.ExecuteAsync(sql, new
         {
-            coupon.Name,coupon.Code,coupon.Description,coupon.Amount,coupon.IsActive,coupon.ModifiedBy,coupon.ModifiedDate,coupon.Id
+            coupon.Name,coupon.Code,coupon.Description,coupon.Amount,coupon.IsActive,coupon.StartDate,coupon.EndDate,
+            coupon.ModifiedBy,coupon.ModifiedDate,coupon.Id
         });
         return coupon;
     }

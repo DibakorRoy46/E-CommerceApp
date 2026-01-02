@@ -184,9 +184,8 @@ namespace Ordering.Insfrastrueture.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CorrelationId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("CorrelationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -206,8 +205,14 @@ namespace Ordering.Insfrastrueture.Migrations
                     b.Property<DateTime>("OccurredOn")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("PoisonedOn")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("ProcessedOn")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("RetryCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("Type")
                         .IsRequired()

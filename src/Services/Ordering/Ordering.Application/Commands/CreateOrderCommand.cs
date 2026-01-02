@@ -28,4 +28,5 @@ public sealed record CreateOrderCommand : IRequest<OrderDto>
     public OrderStatusEnum Status { get; init; }
     public string Remarks { get; init; }
     public List<OrderItemDto> OrderItems { get; init; } = new();
+    public Guid CorrelationId { get; set; }
 }

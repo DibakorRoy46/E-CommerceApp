@@ -1,12 +1,13 @@
 ﻿
 
 using Catalog.Application.DTOs;
+using Catalog.Application.Responses;
 using Catalog.Domain.Enums;
 using MediatR;
 
 namespace Catalog.Application.Queries;
 
-public class GetProductHierarchiesQuery : IRequest<List<ProductHierarchyDto>>
+public class GetProductHierarchiesQuery : IRequest<List<ProductHierarchyResponse>>
 {
     public ProductHierarchyLevelEnum? LevelId { get; }
     public int? ParentId { get; }

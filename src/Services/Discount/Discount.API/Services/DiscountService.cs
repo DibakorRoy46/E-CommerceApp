@@ -1,11 +1,7 @@
-﻿
-using Discount.Application.Commands;
-using Discount.Application.Queries;
+﻿using Discount.Application.Queries;
 using Discount.Grpc.Protos;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using MediatR;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace Discount.API.Services;
@@ -74,46 +70,46 @@ public class DiscountService  :DiscountProtoService.DiscountProtoServiceBase
         return response;
     }
 
-    public async override Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
-    {
-        var command= new CreateCouponCommand(request.Coupon.Name,request.Coupon.Code,request.Coupon.Description,
-                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive,string.Empty);
+    //public async override Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
+    //{
+    //    var command= new CreateCouponCommand(request.Coupon.Name,request.Coupon.Code,request.Coupon.Description,
+    //                Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive,request.,string.Empty);
 
-        var result= await _mediator.Send(command);
+    //    var result= await _mediator.Send(command);
 
-        return new CouponModel()
-        {
-            Id = result.Id,
-            Name = result.Name,
-            Code = result.Code,
-            Description = result.Description,
-            IsActive = result.IsActive,
-            Amount = result.Amount.ToString()
-        };
-    }
+    //    return new CouponModel()
+    //    {
+    //        Id = result.Id,
+    //        Name = result.Name,
+    //        Code = result.Code,
+    //        Description = result.Description,
+    //        IsActive = result.IsActive,
+    //        Amount = result.Amount.ToString()
+    //    };
+    //}
 
-    public async override Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
-    {
-        var command = new UpdateCouponCommand(request.Coupon.Id, request.Coupon.Name, request.Coupon.Code, request.Coupon.Description,
-                    Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive, string.Empty);
+    //public async override Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+    //{
+    //    var command = new UpdateCouponCommand(request.Coupon.Id, request.Coupon.Name, request.Coupon.Code, request.Coupon.Description,
+    //                Convert.ToDecimal(request.Coupon.Amount), request.Coupon.IsActive, string.Empty);
 
-        var result = await _mediator.Send(command);
+    //    var result = await _mediator.Send(command);
 
-        return new CouponModel()
-        {
-            Id = result.Id,
-            Name = result.Name,
-            Code = result.Code,
-            Description = result.Description,
-            IsActive = result.IsActive,
-            Amount = result.Amount.ToString()
-        };
-    }
+    //    return new CouponModel()
+    //    {
+    //        Id = result.Id,
+    //        Name = result.Name,
+    //        Code = result.Code,
+    //        Description = result.Description,
+    //        IsActive = result.IsActive,
+    //        Amount = result.Amount.ToString()
+    //    };
+    //}
 
-    public async override Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
-    {
-        var command = new DeleteCouponCommand(request.Id);
-        var result= await _mediator.Send(command);
-        return new DeleteDiscountResponse() { Success=result };
-    }
+    //public async override Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
+    //{
+    //    var command = new DeleteCouponCommand(request.Id);
+    //    var result= await _mediator.Send(command);
+    //    return new DeleteDiscountResponse() { Success=result };
+    //}
 }

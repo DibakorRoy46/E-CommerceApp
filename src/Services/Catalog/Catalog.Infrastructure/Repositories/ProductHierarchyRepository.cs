@@ -1,6 +1,7 @@
 ﻿
 
 using Catalog.Application.Interfaces;
+using Catalog.Application.Responses;
 using Catalog.Domain.Entities;
 using Catalog.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -20,15 +21,22 @@ public class ProductHierarchyRepository : IProductHierarchyRepository
 
     public async Task<ProductHierarchy?> GetByIdAsync(int id,CancellationToken ct = default)
     {
-        return await _db.ProductHierarchies.FindAsync(new object[] { id }, ct);
+        return await _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().FirstOrDefaultAsync(x=>x.Id == id);
     }
+
     public async Task<ProductHierarchy?> GetByCodeAsync(string code, CancellationToken ct = default)
     {
-        return await _db.ProductHierarchies.FirstOrDefaultAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
+        return await _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().FirstOrDefaultAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
     }
+
+    public async Task<bool> IsCodeExistAsync(string code, CancellationToken ct = default)
+    {
+        return await _db.ProductHierarchies.AsNoTracking().AnyAsync( x=>x.Code.ToLower() == code.ToLower(), ct);
+    }
+
     public async Task<List<ProductHierarchy>> GetAllAsync(ProductHierarchyLevelEnum? levelId,int? parentId,StatusEnum status,CancellationToken cancellationToken)
     {
-        var query = _db.ProductHierarchies.AsQueryable();
+        var query = _db.ProductHierarchies.Include(x=>x.Parent).AsNoTracking().AsQueryable();
 
         if (levelId.HasValue)
             query = query.Where(x => x.LevelId == levelId);
@@ -56,4 +64,14 @@ public class ProductHierarchyRepository : IProductHierarchyRepository
 
     public Task SaveChangesAsync(CancellationToken ct = default) =>  _db.SaveChangesAsync(ct);
 
+    public async Task<IReadOnlyList<ProductCategoryResponse>> GetProductCategoriesAsync(CancellationToken ct = default)
+    {
+        var result = await _db.ProductHierarchies
+                              .AsNoTracking()
+                              .Where(ph => ph.LevelId == ProductHierarchyLevelEnum.Category && ph.Status == StatusEnum.Authroized)
+                              .OrderBy(ph => ph.Name)
+                              .Select(ph => new ProductCategoryResponse( ph.Id, ph.Name, ph.Code))
+                              .ToListAsync(ct);
+        return result;
+    }
 }

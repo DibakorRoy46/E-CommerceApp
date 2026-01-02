@@ -12,12 +12,14 @@ namespace Ordering.Application.Handlers;
 public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, OrderDto>
 {
     private readonly IOrderRepository _repo;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
 
-    public CreateOrderCommandHandler(IOrderRepository repo, IMapper mapper)
+    public CreateOrderCommandHandler(IOrderRepository repo, IMapper mapper, IUnitOfWork unitOfWork)
     {
         _repo = repo;
         _mapper = mapper;
+        _unitOfWork = unitOfWork;
     }
     public async Task<OrderDto> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
@@ -26,13 +28,21 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Ord
         {
             orderEntity.AddItem(item.ProductId, item.ProductName, item.ProductCode, item.UnitPrice, item.Quantity, item.ItemWiseDiscount);
         }
-        var createdOrder = await _repo.AddOrderAsync(orderEntity);      
-        await _repo.SaveChangesAsync(cancellationToken);
 
-        var outboxMessage = OrderMapping.MapOutboMessage(createdOrder);
-        await _repo.SaveOutboxMessageAsync(outboxMessage);
-        await _repo.SaveChangesAsync(cancellationToken);
+        await _unitOfWork.ExecuteInTransactionAsync(async ct =>
+        {
+            var createdOrder = await _repo.AddOrderAsync(orderEntity);
+            await _repo.SaveChangesAsync(ct);
 
-        return _mapper.Map<OrderDto>(createdOrder);
+            var outboxMessage = OrderMapping.MapOutboMessage(createdOrder, request.CorrelationId);
+            var outboxNotificationMessage = OrderMapping.MapNotificationOutboxMessage(createdOrder, request.CorrelationId);
+            await _repo.SaveOutboxMessageAsync(outboxMessage);
+            await _repo.SaveOutboxMessageAsync(outboxNotificationMessage);
+
+            await _repo.SaveChangesAsync(ct);
+
+        }, cancellationToken);
+
+        return _mapper.Map<OrderDto>(orderEntity);
     }
 }

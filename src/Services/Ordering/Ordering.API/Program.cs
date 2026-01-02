@@ -1,7 +1,11 @@
+using Common.Logging;
+using Common.Logging.Extensions;
 using EventBus.Messages.Common;
-using EventBus.Messages.Events;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.SqlServer;
+using Logging.Abstractions;
 using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,43 +19,14 @@ using Ordering.Insfrastrueture.MessageConsumer;
 using Ordering.Insfrastrueture.Presistence;
 using Ordering.Insfrastrueture.Repositories;
 using Serilog;
-using Serilog.Formatting.Compact;
-using Serilog.Sinks.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 // Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .Enrich.WithEnvironmentName()
-    .Enrich.WithThreadId()
-    // Console
-    .WriteTo.Console(new RenderedCompactJsonFormatter())
-    // File sinks (your existing)
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .WriteTo.File("Logs/info-.txt",
-        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-    .WriteTo.File("Logs/error-.txt",
-        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-    .WriteTo.File(new RenderedCompactJsonFormatter(),
-              "Logs/log-.json",
-              rollingInterval: RollingInterval.Day)
-    // Seq (optional)
-    .WriteTo.Seq("http://localhost:5341")
-    // ElasticSearch
-    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
-    {
-        AutoRegisterTemplate = true,
-        IndexFormat = "catalog-api-log-{0:yyyy.MM.dd}",
-        NumberOfShards = 1,
-        NumberOfReplicas = 0
-    })
-    .CreateLogger();
-
-builder.Host.UseSerilog();
+builder.Host.UseSharedSerilog();
+builder.Services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
 
 builder.Services.AddControllers();
 
@@ -75,6 +50,7 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavi
 
 // Repositories
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -113,12 +89,31 @@ builder.Services.AddMassTransit(config =>
     });
 });
 
-
+//Register Hangfire
+builder.Services.AddHangfire(config =>
+{
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.FromSeconds(15),
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        });
+});
+builder.Services.AddHangfireServer();
+builder.Services.AddScoped<OutboxOrderCreatedNotificationDispatcher>();
 
 var app = builder.Build();
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<OutboxOrderCreatedNotificationDispatcher>(
+    "outbox-ordercreated-publisher",job => job.ExecuteAsync(CancellationToken.None),Cron.Minutely); 
 
 // Middleware
-app.UseSerilogRequestLogging(); // logs all HTTP requests
+app.UseSerilogRequestLogging();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();

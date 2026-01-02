@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Ordering.Domain.Entities;
 
 public class OutboxMessage : BaseEntity
@@ -6,9 +8,14 @@ public class OutboxMessage : BaseEntity
     public int Id { get; set; }
     public string Type { get; set; }
     public string Content { get; set; }
-    public string CorrelationId { get; set; }
+    public Guid CorrelationId { get; set; }
     public DateTime OccurredOn { get; set; }
     public DateTime? ProcessedOn { get; set; }
+    [NotMapped]
     public bool? IsProcessed => ProcessedOn.HasValue;
     public string? Error { get; set; }
+
+    //Poison handling
+    public int RetryCount { get; set; }
+    public DateTime? PoisonedOn { get; set; }
 }

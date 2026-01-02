@@ -3,10 +3,13 @@ using Basket.Application.GrpcService;
 using Basket.Application.Interfaces;
 using Basket.Application.Mapping;
 using Basket.Infrastructure.Repositories;
+using Common.Logging.Extensions;
 using Discount.Grpc.Protos;
 using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSharedSerilog();
 
 builder.Services.AddStackExchangeRedisCache(option =>
 {

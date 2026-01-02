@@ -185,7 +185,8 @@ namespace Catalog.Infrastructure.Migrations
                         .HasColumnName("createddate");
 
                     b.Property<int>("LevelId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("LevelId");
 
                     b.Property<string>("ModifiedBy")
                         .HasMaxLength(100)
@@ -203,7 +204,8 @@ namespace Catalog.Infrastructure.Migrations
                         .HasColumnName("name");
 
                     b.Property<int?>("ParentId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("Parentid");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer")
@@ -213,6 +215,8 @@ namespace Catalog.Infrastructure.Migrations
 
                     b.HasIndex("Code")
                         .IsUnique();
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("ProductHierarchies", (string)null);
                 });
@@ -237,6 +241,16 @@ namespace Catalog.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("Catalog.Domain.Entities.ProductHierarchy", b =>
+                {
+                    b.HasOne("Catalog.Domain.Entities.ProductHierarchy", "Parent")
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Parent");
                 });
 #pragma warning restore 612, 618
         }

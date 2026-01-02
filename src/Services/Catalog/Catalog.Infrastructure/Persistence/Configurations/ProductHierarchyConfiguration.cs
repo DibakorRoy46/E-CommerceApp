@@ -23,6 +23,11 @@ public class ProductHierarchyConfiguration :IEntityTypeConfiguration<ProductHier
         builder.Property(x => x.Status)
                .IsRequired()
                .HasColumnName("status");
+        builder.Property(x => x.LevelId)
+               .IsRequired()
+               .HasColumnName("LevelId");
+        builder.Property(x => x.ParentId)
+                .HasColumnName("Parentid");
         builder.Property(x => x.CreatedDate)
                .IsRequired()
                .HasColumnName("createddate");
@@ -36,6 +41,12 @@ public class ProductHierarchyConfiguration :IEntityTypeConfiguration<ProductHier
                .HasColumnName("modifiedby");
         // Indexes
         builder.HasIndex(x => x.Code).IsUnique();
+
+        builder.HasOne(x => x.Parent)
+               .WithMany()
+               .HasForeignKey(x => x.ParentId)
+               .OnDelete(DeleteBehavior.Restrict);
+
     }
 }
 

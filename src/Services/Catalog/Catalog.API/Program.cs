@@ -5,48 +5,23 @@ using Catalog.Application.Logger;
 using Catalog.Application.Mapping;
 using Catalog.Application.Validators;
 using Catalog.Infrastructure.Repositories;
+using Common.Logging;
+using Common.Logging.Extensions;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Logging.Abstractions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Serilog.Formatting.Compact;
-using Serilog.Sinks.Elasticsearch;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 // Configuration
 var configuration = builder.Configuration;
 
 // Configure Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .Enrich.WithEnvironmentName()
-    .Enrich.WithThreadId()
-    // Console
-    .WriteTo.Console(new RenderedCompactJsonFormatter())
-    // File sinks (your existing)
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
-    .WriteTo.File("Logs/info-.txt",
-        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-    .WriteTo.File("Logs/error-.txt",
-        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-    .WriteTo.File(new RenderedCompactJsonFormatter(),
-              "Logs/log-.json",
-              rollingInterval: RollingInterval.Day)
-    // Seq (optional)
-    .WriteTo.Seq("http://localhost:5341")
-    // ElasticSearch
-    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
-    {
-        AutoRegisterTemplate = true,
-        IndexFormat = "catalog-api-log-{0:yyyy.MM.dd}",
-        NumberOfShards = 1,
-        NumberOfReplicas = 0
-    })
-    .CreateLogger();
-
-builder.Host.UseSerilog();
+builder.Host.UseSharedSerilog();
+builder.Services.AddScoped(typeof(IAppLogger<>), typeof(AppLogger<>));
 
 // Add Application services
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -73,15 +48,37 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add JWT auth
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var key = jwtSettings["Key"];
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = issuer,
+            ValidAudience = audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        };
+    });
 
 var app = builder.Build();
 
 // Middleware
-app.UseSerilogRequestLogging(); // logs all HTTP requests
 app.UseMiddleware<ExceptionMiddleware>(); // global exception logging
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 // Run DB migrations on startup (optional, production be cautious)
 using (var scope = app.Services.CreateScope())
 {

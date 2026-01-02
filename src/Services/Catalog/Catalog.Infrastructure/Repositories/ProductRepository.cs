@@ -42,6 +42,7 @@ public class ProductRepository : IProductRepository
         var result = await _db.Products.AsNoTracking().Include(x => x.Brand)
                                        .ThenInclude(b => b.ProductHierarchy)
                                        .Where(p => !status.HasValue || p.Status == status.Value)
+                                       .OrderBy(x=>x.Id)
                                        .ToListAsync(cancellationToken);
         return result;
     }
@@ -125,7 +126,7 @@ public class ProductRepository : IProductRepository
             SortByEnum.PriceDesc => query.OrderByDescending(p => p.Price),
             SortByEnum.NameAsc => query.OrderBy(p => p.Name),
             SortByEnum.NameDesc => query.OrderByDescending(p => p.Name),
-            _ => query.OrderBy(p => p.Name),
+            _ => query.OrderBy(p => p.Id)
         };
 
         // Pagination
@@ -139,11 +140,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<bool> UpdateAsync(Product product)
     {
-       var entity= await _db.Products.FirstOrDefaultAsync(p => p.Id == product.Id);
-        if (entity == null)
-            throw new KeyNotFoundException("Product is not found.");
-
-        var result = _db.Products.Update(entity);
-        return result.State == EntityState.Modified;
+        var result = _db.Products.Update(product);
+        return await Task.FromResult( result.State == EntityState.Modified);
     }
 }

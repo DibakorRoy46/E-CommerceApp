@@ -6,18 +6,18 @@ namespace Catalog.Application.Specifications;
 
 public class ProductSpecParams
 {
-    public StatusEnum? Status { get; private set; }
-    public bool? IsInStock { get; private set; }
-    public int? BrandId { get; private set; }
-    public decimal? MinPrice { get; private set; }
-    public decimal? MaxPrice { get; private set; }
-    public int? ProductHierarchyId { get; private set; }
-    public SortByEnum? SortBy { get; private set; }
-    public string? SearchTerm { get; private set; }
+    public StatusEnum? Status { get;  set; }
+    public bool? IsInStock { get;  set; }
+    public int? BrandId { get;  set; }
+    public decimal? MinPrice { get;  set; }
+    public decimal? MaxPrice { get;  set; }
+    public int? ProductHierarchyId { get;  set; }
+    public SortByEnum? SortBy { get;  set; }
+    public string? SearchTerm { get;  set; }
 
     private const int MaxPageSize = 50;
 
-    public int PageIndex { get; private set; } = 1;
+    public int PageIndex { get;  set; } = 1;
 
     private readonly int _pageSize = 10;
     public int PageSize
@@ -26,5 +26,5 @@ public class ProductSpecParams
         init => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
     }
 
-    private ProductSpecParams() { }
+    public ProductSpecParams() { }
 }

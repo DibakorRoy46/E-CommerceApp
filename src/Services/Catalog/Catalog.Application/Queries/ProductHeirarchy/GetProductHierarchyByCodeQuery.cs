@@ -1,9 +1,10 @@
 ﻿using Catalog.Application.DTOs;
+using Catalog.Application.Responses;
 using MediatR;
 
 namespace Catalog.Application.Queries;
 
-public class GetProductHierarchyByCodeQuery : IRequest<ProductHierarchyDto>
+public class GetProductHierarchyByCodeQuery : IRequest<ProductHierarchyResponse>
 {
     public string Code { get; }
     public GetProductHierarchyByCodeQuery(string code)
