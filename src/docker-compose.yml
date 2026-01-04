@@ -1,0 +1,33 @@
+services:
+  basketdb:
+    image: redis:alphine
+  
+  discountdb:
+    image: postgres
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alphine
+
+  basket:
+    image: ${DOCKER_REGISTRY-}basket
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+
+  discount:
+    image: ${DOCKER_REGISTRY-}discount
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.API/Dockerfile
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+  
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+  
+volumes:
+  postgres_data:
+  elasticsearch-data:
+
+  
