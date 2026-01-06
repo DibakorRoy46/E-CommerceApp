@@ -12,19 +12,25 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Services/Order/Order.API/Order.API.csproj", "Services/Order/Order.API/"]
-RUN dotnet restore "./Services/Order/Order.API/Order.API.csproj"
+COPY ["Services/Ordering/Ordering.API/Ordering.API.csproj", "Services/Ordering/Ordering.API/"]
+COPY ["Insfrastructure/Common.Logging/Common.Logging.csproj", "Insfrastructure/Common.Logging/"]
+COPY ["Insfrastructure/Logging.Abstractions/Logging.Abstractions.csproj", "Insfrastructure/Logging.Abstractions/"]
+COPY ["Services/Ordering/Ordering.Application/Ordering.Application.csproj", "Services/Ordering/Ordering.Application/"]
+COPY ["Services/Ordering/Ordering.Domain/Ordering.Domain.csproj", "Services/Ordering/Ordering.Domain/"]
+COPY ["Services/Ordering/Ordering.Insfrastrueture/Ordering.Insfrastrueture.csproj", "Services/Ordering/Ordering.Insfrastrueture/"]
+COPY ["Insfrastructure/EventBus.Messages/EventBus.Messages.csproj", "Insfrastructure/EventBus.Messages/"]
+RUN dotnet restore "./Services/Ordering/Ordering.API/Ordering.API.csproj"
 COPY . .
-WORKDIR "/src/Services/Order/Order.API"
-RUN dotnet build "./Order.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Services/Ordering/Ordering.API"
+RUN dotnet build "./Ordering.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Order.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Ordering.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Order.API.dll"]
+ENTRYPOINT ["dotnet", "Ordering.API.dll"]

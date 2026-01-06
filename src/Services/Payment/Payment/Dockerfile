@@ -13,7 +13,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Payment/Payment/Payment.API.csproj", "Services/Payment/Payment/"]
-COPY ["EventBus.Messages/EventBus.Messages.csproj", "EventBus.Messages/"]
+COPY ["Insfrastructure/EventBus.Messages/EventBus.Messages.csproj", "Insfrastructure/EventBus.Messages/"]
 RUN dotnet restore "./Services/Payment/Payment/Payment.API.csproj"
 COPY . .
 WORKDIR "/src/Services/Payment/Payment"
