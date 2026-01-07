@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -56,6 +57,12 @@ if (app.Environment.IsDevelopment())
 }
 //TODO: Commented for AKS. 
 //app.UseHttpsRedirection();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppIdentityDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();

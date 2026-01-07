@@ -16,10 +16,8 @@ var audience = jwtSettings["Audience"];
 var env = builder.Environment.EnvironmentName; //Local, Development
 
 builder.Configuration
-    .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-    //.AddJsonFile($"ocelot.{env}.json", optional: false, reloadOnChange: true)
-    .AddEnvironmentVariables();
+    .AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true);
+
 
 // CORS from configuration
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
