@@ -2,6 +2,63 @@ services:
  identitydb:
     image: mcr.microsoft.com/mssql/server:2022-latest
 
+ catalogdb:
+   image: postgres
+   
+ notificationdb:
+   image: mongo
+
+ basketdb:
+   image: redis:alpine
+
+ discountdb:
+   image: postgres
+
+ orderdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+
+ rabbitmq:
+    image: rabbitmq:3-management-alpine
+
+ pgadmin:
+    image: dpage/pgadmin4
+
+ elasticsearch:
+  image: docker.elastic.co/elasticsearch/elasticsearch:8.14.3
+
+ kibana:
+  image: docker.elastic.co/kibana/kibana:8.14.3
+
+ catalog:
+    image: ${DOCKER_REGISTRY-}catalog
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+
+ basket:
+    image: ${DOCKER_REGISTRY-}basket
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+
+ discount:
+    image: ${DOCKER_REGISTRY-}discount
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.API/Dockerfile
+
+ ordering:
+    image: ${DOCKER_REGISTRY-}ordering
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
+      
+ payment:
+    image: ${DOCKER_REGISTRY-}payment
+    build:
+      context: .
+      dockerfile: Services/Payment/Payment/Dockerfile
+
  identity:
     image: ${DOCKER_REGISTRY-}identity
     build:
@@ -13,6 +70,22 @@ services:
     build:
       context: .
       dockerfile: ApiGateway/ApiGateway/Dockerfile
+
+ notification:
+    image: ${DOCKER_REGISTRY-}notification
+    build:
+      context: .
+      dockerfile: Services/Notifications/Notification.API/Dockerfile
+ portainer:
+    image: portainer/portainer-ce
+
 volumes:
  identitydb-data:
+ mongo_data:
+ portainer_data:
+ discount_postgres_data:
+ catalog_postgres_data:
+ orderdb-data:
+ pgadmin_data:
+ elasticsearch-data:
  
